@@ -1,0 +1,57 @@
+
+pip3 install -r requirements.txt
+
+$env:FLASK_APP = "application.py"
+python -m flask run
+
+
+
+I've started working on add a customer timer button in settings:
+
+html:
+<div class="form-group row ml-2">
+  <input type="text" class="col-sm-3 mr-1" for="newTimer" placeholder="name">
+  <input type="number" min="1" max="60" class="form-control col-sm-3" name="newTimer" placeholder="length">
+  <button type="button" class="btn btn-light ml-1" id="addTimer">+</button>
+</div>
+
+js:
+/**
+ * SETTINGS LOGIC
+
+ <div class="form-group row">
+     <label class="col-sm-2 my-auto" for="formGroupExampleInput">Tomato</label>
+     <input type="number" min="1" max="60" class="form-control col-sm-3" name="tomatoT" placeholder="{{ tomatoT }}">
+     <button class="btn btn-light col-sm-1 ml-1" type="button">x</button>
+ </div>
+
+ */
+// Setting functions to the elements
+document.getElementById("addTimer").addEventListener("click", addTimer);
+
+
+
+var modalBody = document.getElementById("modalBody");
+function addTimer()
+{
+
+  var newTimer = document.createElement("div");
+  newTimer.className = "form-group row";
+
+  var newLabel = document.createElement("label");
+  newLabel.className = "col-sm-2 my-auto";
+
+  var newInput = document.createElement("input");
+  newInput.className = "form-control col-sm-3";
+
+  var newDeleteButton = document.createElement("button");
+  newDeleteButton.className = "btn btn-light col-sm-1 ml-1";
+
+  newTimer.append(newLabel, newInput, newDeleteButton);
+
+  var button = document.createElement("button");
+  var node = document.getElementById("modalBody").lastChild;
+  var addTimer = document.getElementById("addTimer");
+
+  modalBody.insertBefore(newTimer, addTimer);
+}
