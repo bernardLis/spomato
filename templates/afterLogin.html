@@ -37,10 +37,16 @@
 {% endblock %}
 {% block main %}
   {# SPOTIFY #}
-  <form action="/" method="post">
-    <button type="submit" name="btn" class="btn btn-outline-success my-5" id="spotifyLogin" value="spotifyLogIn">Spotify Login</button>
-  </form>
+  <h1>after login</h1>
+  <button id="clicker">clicker</button>
+  <br>
+  <br>
 
+  {% for item in playlists["items"]: %}
+    <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
+    <a href='{{ item["href"] }}'>link</a>
+    <p>{{ item["name"] }}</p>
+  {% endfor %}
 
   {# TIMER #}
   <div class ="row">
@@ -69,11 +75,15 @@
     </div>
   </div>
 
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+
   <script>
     var tomatoT = {{ tomatoT }}
     var breakT = {{ breakT }}
+    var token = "{{ token }}"
   </script>
 
+  <script src="/static/spoScript.js"></script>
   <script src="/static/scripts.js"></script>
 
 {% endblock %}

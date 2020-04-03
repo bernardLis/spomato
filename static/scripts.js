@@ -1,9 +1,46 @@
 /**
+  * SPOTIFY LOGIN
+
+app.get('/login', function(req, res) {
+var scopes = 'user-read-private user-read-email';
+res.redirect('https://accounts.spotify.com/authorize' +
+  '?response_type=code' +
+  '&client_id=' + my_client_id +
+  (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
+  '&redirect_uri=' + encodeURIComponent(redirect_uri));
+});
+
+
+document.getElementById("spotifyLogin").addEventListener("click", spotifyLogin);
+//streaming, user-modify-playback-state, user-read-playback-position, user-read-currently-playing
+function spotifyLogin() {
+  var my_client_id ="b7c4807138a84147bd1147b9bf602048";
+  var scopes = "streaming, user-library-read, playlist-read-collaborative, user-modify-playback-state, user-read-playback-position, user-read-currently-playing";
+  var redirect_uri = "http://127.0.0.1:5000/afterLogin/"
+
+
+  var authToken = "https://accounts.spotify.com/authorize" + "?response_type=code"
+  + "&client_id=" + my_client_id
+  + "&scope=" + encodeURIComponent(scopes)
+  + "&redirect_uri=" + encodeURIComponent(redirect_uri);
+
+  console.log(authToken);
+
+  location.href = authToken;
+}
+
+
+*/
+
+
+/**
  * TIMER LOGIC
  * TODO: add a button for a new timer
  * TODO: after double clicking multiple times on timer it "breaks"
  * TODO: when I am at 00:00 and edit > exit the timer it goes to minus time
  */
+
+
 
 // Setting functions to the elements
 document.getElementById("tomatoTimer").addEventListener("click", tomatoTimer);
@@ -40,16 +77,19 @@ var timer = new Timer(function()
   // Display the timer in the page title
   document.title = minutes + ":" + seconds;
 
-  // If the count down is finished pause timer
+  // When the countdown is finished pause timer
   if (distance <= 0)
   {
+    // Display buzzzzz in page title
+    document.title = "Buzzzzz!";
+
     isTimerOver = true;
     document.getElementById("pauseResumeTimer").innerHTML = "Start";
     timer.stop();
   }
 }, 1000);
 
-// Timer is editable after double click and runs from edited value
+// Timer is editable after double click and runs from edited value // "p",
 // FROM: https://codereview.stackexchange.com/questions/32520/double-click-to-edit-and-add-new-value-to-li
 var oriVal;
 var oriSeconds;
@@ -64,15 +104,20 @@ $("#timerDad").on("dblclick", "p", function (e) {
 
   // Clear text and add an input field - ideally with the original value as a placeholder - works!
   $(this).text("");
+
   $(`<input type='text' id="editableTimer" placeholder=${oriVal}>`).appendTo(this).focus();
 
+  // This and on focus below "prevent" the timer breaking when user furiously clicks on it
+  e.preventDefault();
+});
+
+$("#timerDad").on("focus", "p", function(e){
+  e.preventDefault();
+  e.stopPropagation();
 });
 
 // On focus out start playing inputed timer
 // > jquerry for children of, p > input this does not make sense tho...I will ignore it for now
-// Prevents errors if user keeps double clicking... it does not work very well...
-//e.preventDefault(); 
-//e.stopPropagation();
 
 $("#timerDad").on("focusout", "p > input", function (e)
 {

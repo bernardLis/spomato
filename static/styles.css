@@ -45,9 +45,14 @@ main img
     /* constrain images on small screens */
     max-width: 100%;
 }
+/* SPOTIFY */
+
+.playlistCover
+{
+  width: 30%;
+}
 
 /* TIMER */
-
 #settingsCog
 {
   font-size: 1.2rem;
@@ -61,6 +66,11 @@ main img
 {
   color: #b2bec3;
 }
+.form-control
+{
+  width: auto;
+}
+
 
 #timer
 {
