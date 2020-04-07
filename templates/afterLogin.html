@@ -3,6 +3,7 @@
 {% block title %}
     index
 {% endblock %}
+
 {% block nav %}
 {# SETTINGS #}
   <i type="button" class="fas fa-cog" data-toggle="modal" data-target="#exampleModal" id="settingsCog"></i>
@@ -16,7 +17,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="/" method="post">
+        <form action="/afterLogin/" method="post">
           <div id="modalBody" class="modal-body">
             <div class="form-group row ml-2">
                 <label class="my-auto" for="tomatoT">Tomato</label>
@@ -35,19 +36,8 @@
     </div>
   </div>
 {% endblock %}
+
 {% block main %}
-  {# SPOTIFY #}
-  <h1>after login</h1>
-  <button id="clicker">clicker</button>
-  <br>
-  <br>
-
-  {% for item in playlists["items"]: %}
-    <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
-    <a href='{{ item["href"] }}'>link</a>
-    <p>{{ item["name"] }}</p>
-  {% endfor %}
-
   {# TIMER #}
   <div class ="row">
     <div class="mx-auto">
@@ -75,7 +65,29 @@
     </div>
   </div>
 
-  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+  {# DEV TOOLS #}
+  <h1>after login</h1>
+  <button id="clicker">clicker</button>
+  <button id="resume">resume</button>
+  <button id="pause">pause</button>
+  <i class="fas fa-volume-up"></i>
+
+
+  <br>
+  <br>
+
+  {# SPOTIFY #}
+  {% for item in playlists["items"]: %}
+    <div class="playlistElement mx-auto">
+      <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
+      <div class="wrapperOfAWrapper">
+        <div class="togglePlayPlaylistWrapper">
+          <i data-playlistURI="{{ item["uri"] }}" class="playlistURI fa fa-play togglePlayPlaylist"></i>
+        </div>
+      </div>
+    </div>
+    <p>{{ item["name"] }}</p>
+  {% endfor %}
 
   <script>
     var tomatoT = {{ tomatoT }}
@@ -83,6 +95,7 @@
     var token = "{{ token }}"
   </script>
 
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script src="/static/spoScript.js"></script>
   <script src="/static/scripts.js"></script>
 

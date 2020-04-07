@@ -47,9 +47,11 @@ API_BASE = 'https://accounts.spotify.com'
 REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
 # Spotify variables
 CLI_ID = "b7c4807138a84147bd1147b9bf602048"
-CLI_SEC = "XXXX"
-SCOPE = "streaming, user-library-read, playlist-read-collaborative, user-modify-playback-state, user-read-playback-position, user-read-currently-playing, user-read-email, user-read-private"
+CLI_SEC = "699795974a5d467e900b64b3018d09d4"
+SCOPE = "streaming, user-library-read, playlist-read-private, playlist-read-collaborative, user-modify-playback-state, user-read-playback-position, user-read-currently-playing, user-read-email, user-read-private"
 # Set this to True for testing but you probaly want it set to False in production.
+# Whether or not to force the user to approve the app again if they’ve already done so. If false (default), a user who has already approved the application may be automatically redirected to the URI specified by redirect_uri. If true, the user will not be automatically redirected and will have to approve the app again.
+# When I set it to false in dev env it breaks the authentication
 SHOW_DIALOG = True
 
 @app.route("/", methods=["GET", "POST"])
@@ -57,7 +59,6 @@ def index():
     """Spotify Timer App!"""
     # User reached route via POST
     if request.method == "POST":
-
         # User wants to login with Spotify
         # authorization-code-flow Step 1. Have your application request authorization;
         # the user logs in and authorizes access
@@ -65,20 +66,18 @@ def index():
             auth_url = f'{API_BASE}/authorize?client_id={CLI_ID}&response_type=code&redirect_uri={REDIRECT_URI}&scope={SCOPE}&show_dialog={SHOW_DIALOG}'
             return redirect(auth_url)
 
+        # User reached route via POST to change the timer settings
         else:
-            # User reached route via POST to change the timer settings
             tomatoT = request.form.get("tomatoT")
             if (tomatoT == ""):
                 tomatoT = 25
             breakT = request.form.get("breakT")
             if (breakT == ""):
                 breakT = 5
-
             return render_template("index.html", tomatoT=tomatoT, breakT=breakT)
 
     # User reached route via GET (as by loading the page)
     else:
-        print("im in get")
         tomatoT = 25
         breakT = 5
         return render_template("index.html", tomatoT=tomatoT, breakT=breakT)
@@ -101,9 +100,7 @@ def api_callback():
         })
 
     res_body = res.json()
-    print(res.json())
     session["token"] = res_body.get("access_token")
-
     return redirect("/afterLogin/")
 
 # authorization-code-flow Step 3.
@@ -111,9 +108,17 @@ def api_callback():
 # Spotify returns requested data
 @app.route("/afterLogin/", methods=["GET", "POST"])
 def after_login():
-    print("im in afterlogin")
+    # Get user's Spotify Auth token
+    token = session["token"]
+
+    # Get users Spotify playlists
+    sp = spotipy.Spotify(auth=token)
+    playlistsJSON = json.dumps(sp.current_user_playlists(), indent=4)
+    playlists = json.loads(playlistsJSON)
+    print(playlistsJSON)
     # User reached route via POST
     if request.method == "POST":
+        print("im in after login post")
         # User reached route via POST to change the timer settings
         tomatoT = request.form.get("tomatoT")
         if (tomatoT == ""):
@@ -121,18 +126,11 @@ def after_login():
         breakT = request.form.get("breakT")
         if (breakT == ""):
             breakT = 5
-
-        return render_template("index.html", tomatoT=tomatoT, breakT=breakT)
+        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, playlists=playlists, token=token)
 
     # User reached route via GET
     else:
-        # Get users Spotify playlists
-        sp = spotipy.Spotify(auth=session["token"])
-        playlistsJSON = json.dumps(sp.current_user_playlists())
-        playlists = json.loads(playlistsJSON)
-
-        token = session["token"]
-
+        # Variables for JavaScript
         tomatoT = 25
         breakT = 5
         return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, playlists=playlists, token=token)

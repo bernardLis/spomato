@@ -1,46 +1,9 @@
 /**
-  * SPOTIFY LOGIN
-
-app.get('/login', function(req, res) {
-var scopes = 'user-read-private user-read-email';
-res.redirect('https://accounts.spotify.com/authorize' +
-  '?response_type=code' +
-  '&client_id=' + my_client_id +
-  (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
-  '&redirect_uri=' + encodeURIComponent(redirect_uri));
-});
-
-
-document.getElementById("spotifyLogin").addEventListener("click", spotifyLogin);
-//streaming, user-modify-playback-state, user-read-playback-position, user-read-currently-playing
-function spotifyLogin() {
-  var my_client_id ="b7c4807138a84147bd1147b9bf602048";
-  var scopes = "streaming, user-library-read, playlist-read-collaborative, user-modify-playback-state, user-read-playback-position, user-read-currently-playing";
-  var redirect_uri = "http://127.0.0.1:5000/afterLogin/"
-
-
-  var authToken = "https://accounts.spotify.com/authorize" + "?response_type=code"
-  + "&client_id=" + my_client_id
-  + "&scope=" + encodeURIComponent(scopes)
-  + "&redirect_uri=" + encodeURIComponent(redirect_uri);
-
-  console.log(authToken);
-
-  location.href = authToken;
-}
-
-
-*/
-
-
-/**
  * TIMER LOGIC
  * TODO: add a button for a new timer
  * TODO: after double clicking multiple times on timer it "breaks"
- * TODO: when I am at 00:00 and edit > exit the timer it goes to minus time
+ * TODO: add hours to the timer?
  */
-
-
 
 // Setting functions to the elements
 document.getElementById("tomatoTimer").addEventListener("click", tomatoTimer);
@@ -50,7 +13,6 @@ document.getElementById("tenS").addEventListener("click", tenS);
 var timerDisplay = document.getElementById("timer");
 
 document.getElementById("pauseResumeTimer").addEventListener("click", pauseResumeTimer);
-
 
 // Set the date we're counting down to
 var timerValue = 1 * 1000;
