@@ -78,11 +78,13 @@
 
   {# SPOTIFY #}
   {% for item in playlists["items"]: %}
+  {# if you add / remove any elements here you may break the javascript for pause/play logic #}
     <div class="playlistElement mx-auto">
       <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
       <div class="wrapperOfAWrapper">
-        <div class="togglePlayPlaylistWrapper">
-          <i data-playlistURI="{{ item["uri"] }}" class="playlistURI fa fa-play togglePlayPlaylist"></i>
+        <div data-playlistURI="{{ item["uri"] }}" class="playlistURI togglePlayPlaylistWrapper">
+          <i class="playButton fa-play togglePlayPlaylist hidden"></i>
+          {#<i class="fa-volume-up pauseButton togglePlayPlaylist hidden"></i>#}
         </div>
       </div>
     </div>
