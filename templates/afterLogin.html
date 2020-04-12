@@ -79,17 +79,76 @@
   {# SPOTIFY #}
   {% for item in playlists["items"]: %}
   {# if you add / remove any elements here you may break the javascript for pause/play logic #}
-    <div class="playlistElement mx-auto">
-      <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
-      <div class="wrapperOfAWrapper">
-        <div data-playlistURI="{{ item["uri"] }}" class="playlistURI togglePlayPlaylistWrapper">
-          <i class="playButton fa-play togglePlayPlaylist hidden"></i>
-          {#<i class="fa-volume-up pauseButton togglePlayPlaylist hidden"></i>#}
+
+  {% if loop.index0 % 4 == 0 %}
+  <div class="row">
+  {% endif %}
+
+    <div class="col">
+      <div class="playlistElement mx-auto">
+        <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
+        <div class="wrapperOfAWrapper">
+          <div data-playlistURI="{{ item["uri"] }}" class="playlistURI togglePlayPlaylistWrapper">
+            <i class="playButton fa-play togglePlayPlaylist hidden"></i>
+          </div>
         </div>
       </div>
+      <p>{{ item["name"] }}</p>
     </div>
-    <p>{{ item["name"] }}</p>
+
+  {% if loop.index0 % 4 == 3 or loop.last %}
+  </div>
+  {% endif %}
+
   {% endfor %}
+
+  {# PLAYER #}
+  <div class="playerContainer">
+    <div class="currentlyPlayedSong row my-auto">
+
+        <div class="col-md-1">
+          <div id="cpCoverWrapper" class="my-auto mx-auto">
+            <img id="cpCover" src="https://placekitten.com/300/300"/>
+          </div>
+        </div>
+
+        <div class="col-md-2 my-auto">
+          <div id="cpName" class="text-left">
+            miau miau miau!
+          </div>
+          <div id="cpArtist" class="text-left">
+            miau miau miau!
+          </div>
+        </div>
+
+        <div class="col-md-6 my-auto">
+          <div class="row mt-3">
+            <div class="col-md-6 mx-auto">
+              <i id="toggleShuffle" class="d-inline fas fa-random mr-3"></i>
+              <i id="previousTrack" class="d-inline fas fa-step-backward"></i>
+
+              <i id="togglePlayButton" class="mx-3 d-inline fa-play fa"></i>
+
+              <i id="nextTrack" class="d-inline fas fa-step-forward"></i>
+              <i id="toggleRepeat" class="fas fa-redo ml-3"></i>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6 mx-auto">
+              <div class="d-inline">0:00</div>
+              <div class="d-inline">time elapsed placeholder</div>
+              <div class="d-inline">4:00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 my-auto">
+          <i id="muteButton" class="mr-1 d-inline fa fa-volume-up"></i>
+          <input id="volumeRange" type="range" class="my-auto d-inline form-control-range" min="0" max="100">
+        </div>
+
+    </div>
+  </div>
 
   <script>
     var tomatoT = {{ tomatoT }}

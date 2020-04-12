@@ -38,6 +38,9 @@ main
 
     /* center contents */
     text-align: center;
+
+    /* place for fixed player */
+    margin-bottom: 10%;
 }
 
 main img
@@ -45,6 +48,48 @@ main img
     /* constrain images on small screens */
     max-width: 100%;
 }
+
+
+/* TIMER */
+#settingsCog
+{
+  font-size: 1.2rem;
+  color: #636e72;
+}
+#settingsCog:hover
+{
+  color: #2d3436;
+  transform: scale(1.05);
+  transition: all .2s ease-in-out;
+}
+#settingsCog:active
+{
+  transform: scale(0.95);
+  transition: all .2s ease-in-out;
+  color: #b2bec3;
+}
+.form-control
+{
+  width: auto;
+}
+
+
+#timer
+{
+  font-size: 5rem;
+}
+
+#editableTimer
+{
+  width: 12rem;
+}
+#editableTimer:focus
+{
+  outline: none;
+  border: none;
+}
+
+
 /* SPOTIFY */
 
 /* Playlist styles */
@@ -72,7 +117,7 @@ main img
 .playlistCover
 {
   width: 100%;
-  height: 100%
+  height: 100%;
   margin: 0;
 }
 
@@ -114,43 +159,179 @@ main img
   border: 1px solid #666966;
 }
 
+/* PLAYER */
 
-
-/* TIMER */
-#settingsCog
+.playerContainer
 {
-  font-size: 1.2rem;
-  color: #636e72;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #4d4f4e;
+  color: white;
+  text-align: center;
+  height: 100px;
 }
-#settingsCog:hover
+#cpCoverWrapper
 {
-  color: #2d3436;
+  padding: 0.5rem;
+}
+
+#cpArtist
+{
+  font-size: 0.8rem;
+}
+
+#togglePlayButton
+{
+  font-size: 0.8rem;
+  padding: 8px;
+  color: white;
+  border: 1px solid #878684;
+  border-radius : 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+#togglePlayButton:hover
+{
+  border: 1px solid white;
   transform: scale(1.05);
   transition: all .2s ease-in-out;
 }
-#settingsCog:active
+#togglePlayButton:active
 {
-  transform: scale(0.95);
+  transform: scale(1);
   transition: all .2s ease-in-out;
-  color: #b2bec3;
-}
-.form-control
-{
-  width: auto;
+  color: #adadad;
+  border: 1px solid #666966;
 }
 
-
-#timer
+#previousTrack, #nextTrack
 {
-  font-size: 5rem;
+  font-size: 0.9rem;
+  color: #c2c2c2;
+}
+#previousTrack:hover, #nextTrack:hover
+{
+  color: white;
+  transform: scale(1.05);
+  transition: all .4s ease-in-out;
+}
+#previousTrack:active, #nextTrack:active
+{
+  transform: scale(1);
+  transition: all .2s ease-in-out;
+  color: #c2c2c2;
 }
 
-#editableTimer
+#toggleShuffle, #toggleRepeat, #muteButton
 {
-  width: 12rem;
+  font-size: 0.9rem;
+  color: #c2c2c2;
 }
-#editableTimer:focus
+#toggleShuffle:hover, #toggleRepeat:hover, #muteButton:hover
 {
+  filter: brightness(115%);
+  transform: scale(1.05);
+  transition: all .4s ease-in-out;
+}
+#toggleShuffle:active, #toggleRepeat:active, #muteButton:active
+{
+  transform: scale(1);
+  transition: all .2s ease-in-out;
+  filter: brightness(90%);
+}
+
+/* Volume control */
+#volumeRange
+{
+  width: 10rem;
+  background-color: inherit;
+}
+
+/* http://danielstern.ca/range.css/?ref=css-tricks#/ */
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 1.85px 0;
+}
+input[type=range]:focus {
   outline: none;
-  border: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6.3px;
+  cursor: pointer;
+  box-shadow: 0.7px 0.7px 1px #000000, 0px 0px 0.7px #0d0d0d;
+  background: #191414;
+  border-radius: 25px;
+  border: 0px solid #010101;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 1px 1px 1px #1db954, 0px 0px 1px #20cf5e;
+  border: 0px solid #1db954;
+  height: 10px;
+  width: 10px;
+  border-radius: 100px;
+  background: #1db954;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -1.85px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #271f1f;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 6.3px;
+  cursor: pointer;
+  box-shadow: 0.7px 0.7px 1px #000000, 0px 0px 0.7px #0d0d0d;
+  background: #191414;
+  border-radius: 25px;
+  border: 0px solid #010101;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #1db954, 0px 0px 1px #20cf5e;
+  border: 0px solid #1db954;
+  height: 10px;
+  width: 10px;
+  border-radius: 100px;
+  background: #1db954;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 6.3px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #0b0909;
+  border: 0px solid #010101;
+  border-radius: 50px;
+  box-shadow: 0.7px 0.7px 1px #000000, 0px 0px 0.7px #0d0d0d;
+}
+input[type=range]::-ms-fill-upper {
+  background: #191414;
+  border: 0px solid #010101;
+  border-radius: 50px;
+  box-shadow: 0.7px 0.7px 1px #000000, 0px 0px 0.7px #0d0d0d;
+}
+input[type=range]::-ms-thumb {
+  box-shadow: 1px 1px 1px #1db954, 0px 0px 1px #20cf5e;
+  border: 0px solid #1db954;
+  height: 10px;
+  width: 10px;
+  border-radius: 100px;
+  background: #1db954;
+  cursor: pointer;
+  height: 6.3px;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #191414;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #271f1f;
 }

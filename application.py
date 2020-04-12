@@ -115,7 +115,7 @@ def after_login():
     sp = spotipy.Spotify(auth=token)
     playlistsJSON = json.dumps(sp.current_user_playlists(), indent=4)
     playlists = json.loads(playlistsJSON)
-    print(playlistsJSON)
+
     # User reached route via POST
     if request.method == "POST":
         print("im in after login post")
