@@ -48,7 +48,7 @@ REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
 # Spotify variables
 CLI_ID = "b7c4807138a84147bd1147b9bf602048"
 CLI_SEC = "699795974a5d467e900b64b3018d09d4"
-SCOPE = "streaming, user-library-read, playlist-read-private, playlist-read-collaborative, user-modify-playback-state, user-read-playback-position, user-read-currently-playing, user-read-email, user-read-private"
+SCOPE = "streaming, user-library-read, playlist-read-private, playlist-read-collaborative, user-modify-playback-state, user-read-playback-position, user-read-currently-playing, user-read-email, user-read-private, user-read-playback-state"
 # Set this to True for testing but you probaly want it set to False in production.
 # Whether or not to force the user to approve the app again if they’ve already done so. If false (default), a user who has already approved the application may be automatically redirected to the URI specified by redirect_uri. If true, the user will not be automatically redirected and will have to approve the app again.
 # When I set it to false in dev env it breaks the authentication
@@ -74,7 +74,7 @@ def index():
             breakT = request.form.get("breakT")
             if (breakT == ""):
                 breakT = 5
-            return render_template("index.html", tomatoT=tomatoT, breakT=breakT)
+            return render_template("index.html", tomatoT=tomatoT, breakT=breakT, route="/")
 
     # User reached route via GET (as by loading the page)
     else:
@@ -101,6 +101,9 @@ def api_callback():
 
     res_body = res.json()
     session["token"] = res_body.get("access_token")
+    session["refresh_token"] = res_body.get("refresh_token")
+    session["expires_in"] = res_body.get("expires_in")
+
     return redirect("/afterLogin/")
 
 # authorization-code-flow Step 3.
@@ -108,17 +111,24 @@ def api_callback():
 # Spotify returns requested data
 @app.route("/afterLogin/", methods=["GET", "POST"])
 def after_login():
-    # Get user's Spotify Auth token
+    # Get user's Spotify Auth tokens
     token = session["token"]
+    refreshToken = session["refresh_token"]
 
     # Get users Spotify playlists
     sp = spotipy.Spotify(auth=token)
     playlistsJSON = json.dumps(sp.current_user_playlists(), indent=4)
     playlists = json.loads(playlistsJSON)
 
+    # Append kitten placeholders to empty playlists
+    for item in playlists["items"]:
+        #cover - item["images"][0]["url"]
+        if (len(item["images"]) == 0):
+            item["images"].append({'url': 'https://placekitten.com/300/300'})
+
+
     # User reached route via POST
     if request.method == "POST":
-        print("im in after login post")
         # User reached route via POST to change the timer settings
         tomatoT = request.form.get("tomatoT")
         if (tomatoT == ""):
@@ -126,14 +136,14 @@ def after_login():
         breakT = request.form.get("breakT")
         if (breakT == ""):
             breakT = 5
-        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, playlists=playlists, token=token)
+        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, playlists=playlists, token=token, refreshToken=refreshToken, route="/afterLogin/")
 
     # User reached route via GET
     else:
         # Variables for JavaScript
         tomatoT = 25
         breakT = 5
-        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, playlists=playlists, token=token)
+        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, playlists=playlists, token=token, refreshToken=refreshToken, route="/afterLogin/")
 
 def errorhandler(e):
     """Handle error"""

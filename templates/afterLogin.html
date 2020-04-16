@@ -4,109 +4,72 @@
     index
 {% endblock %}
 
-{% block nav %}
-{# SETTINGS #}
-  <i type="button" class="fas fa-cog" data-toggle="modal" data-target="#exampleModal" id="settingsCog"></i>
-
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="/afterLogin/" method="post">
-          <div id="modalBody" class="modal-body">
-            <div class="form-group row ml-2">
-                <label class="my-auto" for="tomatoT">Tomato</label>
-                <input type="number" min="1" max="60" class="form-control ml-2" name="tomatoT" placeholder="{{ tomatoT }}">
-            </div>
-            <div class="form-group row ml-2">
-              <label class="my-auto" for="breakT">Break</label>
-              <input type="number" min="1" max="60" class="form-control ml-2" name="breakT" placeholder="{{ breakT }}">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" name="btn" class="btn btn-light" value="timerValuesChange">Save changes</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-{% endblock %}
-
 {% block main %}
   {# TIMER #}
-  <div class ="row">
-    <div class="mx-auto">
-        <button type="button" class="btn btn-outline-danger btn-lg mx-3" id="tomatoTimer">Tomato</button>
-        <button type="button" class="btn btn-outline-danger btn-lg mx-2" id="breakTimer">Break</button>
-    </div>
-  </div>
-  <div class ="row">
-    <div class="mx-auto">
-        <button type="button" class="btn btn-primary mx-sm" id="tenS">10s</button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="container mx-auto">
-      <div id="timerDad" class=col-5-sm>
-        <p id="timer">00:00</p>
+  <div id="timerContainer">
+
+    <div class="row">
+      <div class="mx-auto timerButtons">
+          <button type="button" class="btn btn-outline-danger btn-lg mx-3" id="tomatoTimer">Tomato</button>
+          <button type="button" class="btn btn-outline-danger btn-lg mx-2" id="breakTimer">Break</button>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="mx-auto">
-      <div class="container">
-        <button class="btn btn-light mx-sm resumeTimer" id="pauseResumeTimer">Start</button>
+    <div class ="row">
+      <div class="mx-auto">
+          <button type="button" class="btn btn-primary mx-sm" id="tenS">10s</button>
       </div>
     </div>
-  </div>
-
-  {# DEV TOOLS #}
-  <h1>after login</h1>
-  <button id="clicker">clicker</button>
-  <button id="resume">resume</button>
-  <button id="pause">pause</button>
-  <i class="fas fa-volume-up"></i>
-
-
-  <br>
-  <br>
-
-  {# SPOTIFY #}
-  {% for item in playlists["items"]: %}
-  {# if you add / remove any elements here you may break the javascript for pause/play logic #}
-
-  {% if loop.index0 % 4 == 0 %}
-  <div class="row">
-  {% endif %}
-
-    <div class="col">
-      <div class="playlistElement mx-auto">
-        <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
-        <div class="wrapperOfAWrapper">
-          <div data-playlistURI="{{ item["uri"] }}" class="playlistURI togglePlayPlaylistWrapper">
-            <i class="playButton fa-play togglePlayPlaylist hidden"></i>
-          </div>
+    <div class="row">
+      <div class="container mx-auto">
+        <div id="timerDad" class=col-5-sm>
+          <p id="timer">00:00</p>
         </div>
       </div>
-      <p>{{ item["name"] }}</p>
     </div>
-
-  {% if loop.index0 % 4 == 3 or loop.last %}
+    <div class="row">
+      <div class="mx-auto">
+        <div class="container">
+          <button class="btn btn-light mx-sm resumeTimer" id="pauseResumeTimer">Start</button>
+        </div>
+      </div>
+    </div>
   </div>
-  {% endif %}
 
-  {% endfor %}
+
+
+  {# SPOTIFY #}
+  <div id="playlistContainer">
+    {% for item in playlists["items"]: %}
+    {# if you add / remove any elements here you may break the javascript for pause/play logic #}
+
+    {% if loop.index0 % 5 == 0 %}
+    <div class="row p-0 m-0">
+    {% endif %}
+
+      <div class="col p-0 m-0">
+        <div class="playlistElement mx-auto">
+          <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
+          <div class="wrapperOfAWrapper">
+            <div data-playlistURI="{{ item["uri"] }}" class="playlistURI togglePlayPlaylistWrapper">
+              <i class="playButton fa-play togglePlayPlaylist hidden"></i>
+            </div>
+          </div>
+        </div>
+        <p class="playlistName">{{ item["name"] }}</p>
+      </div>
+
+    {% if loop.index0 % 5 == 4 or loop.last %}
+    </div>
+    {% endif %}
+
+    {% endfor %}
+  </div>
 
   {# PLAYER #}
-  <div class="playerContainer">
+  <div id="playerDesktop" class="playerContainer">
     <div class="currentlyPlayedSong row my-auto">
 
-        <div class="col-md-1">
+        <div class="col-md-1 my-auto">
           <div id="cpCoverWrapper" class="my-auto mx-auto">
             <img id="cpCover" src="https://placekitten.com/300/300"/>
           </div>
@@ -117,11 +80,11 @@
             miau miau miau!
           </div>
           <div id="cpArtist" class="text-left">
-            miau miau miau!
+            a cat
           </div>
         </div>
 
-        <div class="col-md-6 my-auto">
+        <div class="col-md-6 my-auto trackControls">
           <div class="row mt-3">
             <div class="col-md-6 mx-auto">
               <i id="toggleShuffle" class="d-inline fas fa-random mr-3"></i>
@@ -133,19 +96,39 @@
               <i id="toggleRepeat" class="fas fa-redo ml-3"></i>
             </div>
           </div>
-          <div class="row mt-3">
-            <div class="col-md-6 mx-auto">
-              <div class="d-inline">0:00</div>
-              <div class="d-inline">time elapsed placeholder</div>
-              <div class="d-inline">4:00</div>
+          <div class="row my-3">
+            <div class="col-md-12">
+              <div id="trackPosition" class="d-inline">0:00</div>
+              <input id="trackRange" value="0" type="range" class="slider mx-2 d-inline form-control-range" min="0" max="100">
+              <div id="trackDuration" class="d-inline">4:00</div>
             </div>
           </div>
         </div>
 
-        <div class="col-md-3 my-auto">
+        <div class="col-md-3 my-auto volumeControls">
           <i id="muteButton" class="mr-1 d-inline fa fa-volume-up"></i>
-          <input id="volumeRange" type="range" class="my-auto d-inline form-control-range" min="0" max="100">
+          <input id="volumeRange" value="50" type="range" class="slider my-auto d-inline form-control-range" min="0" max="100">
         </div>
+
+    </div>
+  </div>
+
+  <div id="mobilePlayer" class="container-fluid playerContainer ">
+    <div class="currentlyPlayedSong mt-2 d-flex justify-content-between align-items-center">
+      <div class="d-flex justify-content-right">
+        <img id="cpCoverMobile" src="https://placekitten.com/300/300"/>
+
+        <div class="ml-2">
+          <div id="cpNameMobile" class="text-left">
+            miau miau miau!
+          </div>
+          <div id="cpArtistMobile" class="text-left">
+            a cat
+          </div>
+        </div>
+      </div>
+
+      <i id="togglePlayButtonMobile" class="mx-3 d-inline fa-play fa"></i>
 
     </div>
   </div>
@@ -154,10 +137,10 @@
     var tomatoT = {{ tomatoT }}
     var breakT = {{ breakT }}
     var token = "{{ token }}"
+    var refreshToken = "{{ refreshToken }}"
   </script>
 
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script src="/static/spoScript.js"></script>
-  <script src="/static/scripts.js"></script>
 
 {% endblock %}

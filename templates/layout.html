@@ -31,12 +31,6 @@
     </head>
 
     <body>
-      <nav class="navbar navbar-light bg-light border">
-        <a class="navbar-brand" href="/">Spomato</a>
-        <div class="navbar-nav mt-2">
-          {% block nav %}{% endblock %}
-        </div>
-      </nav>
         {% if get_flashed_messages() %}
             <header>
                 <div class="alert alert-primary border text-center" role="alert">
@@ -45,7 +39,45 @@
             </header>
         {% endif %}
 
-        <main class="container p-5">
+          <main class="container py-5 px-3">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+              <div class="brandContainer">
+                <a href="/">
+                  <i id="brandIcon" class="fas fa-home"></i>
+                </a>
+              </div>
+              <div class="">
+                <i type="button" class="fas fa-cog" data-toggle="modal" data-target="#exampleModal" id="settingsCog"></i>
+
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <form action="{{ route }}" method="post">
+                        <div id="modalBody" class="modal-body">
+                          <div class="form-group row ml-2">
+                              <label class="my-auto" for="tomatoT">Tomato</label>
+                              <input type="number" min="1" max="60" class="form-control ml-2" name="tomatoT" placeholder="{{ tomatoT }}">
+                          </div>
+                          <div class="form-group row ml-2">
+                            <label class="my-auto" for="breakT">Break</label>
+                            <input type="number" min="1" max="60" class="form-control ml-2" name="breakT" placeholder="{{ breakT }}">
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" name="btn" class="btn btn-light" value="timerValuesChange">Save changes</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             {% block main %}{% endblock %}
         </main>
 

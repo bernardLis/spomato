@@ -1,25 +1,37 @@
-nav .navbar-brand
+/* CSS styles for viewports 1000px and less */
+@media (max-width: 1000px)
 {
-    /* size for brand */
-    font-size: xx-large;
+  #playerDesktop
+  {
+    display: none;
+  }
+
+  #mobilePlayer
+  {
+    height: 70px;
+  }
+  #cpCoverWrapperMobile
+  {
+    padding: 0.1rem;
+  }
+  #cpCoverMobile
+  {
+    width: 50px;
+    height: 50px;
+  }
+}
+/* CSS styles for viewports 1001px and more */
+@media (min-width: 1001px)
+{
+  #mobilePlayer
+  {
+    display: none;
+  }
 }
 
-/* colors for brand */
-nav .navbar-brand .blue
+.brandContainer a
 {
-    color: #537fbe;
-}
-nav .navbar-brand .red
-{
-    color: #ea433b;
-}
-nav .navbar-brand .yellow
-{
-    color: #f5b82e;
-}
-nav .navbar-brand .green
-{
-    color: #2e944b;
+  text-decoration: none;
 }
 
 main .form-control
@@ -29,6 +41,7 @@ main .form-control
 
     /* override Bootstrap's 100% width for form controls */
     width: auto;
+
 }
 
 main
@@ -41,32 +54,51 @@ main
 
     /* place for fixed player */
     margin-bottom: 10%;
+
 }
 
 main img
 {
     /* constrain images on small screens */
-    max-width: 100%;
+     max-width: 100%;
+}
+
+body
+{
+  background-color: #171717;
 }
 
 
 /* TIMER */
-#settingsCog
+#timerContainer
+{
+  padding-bottom: 5%;
+}
+
+.timerButtons
+{
+  user-select: none;
+}
+
+#settingsCog, #brandIcon
 {
   font-size: 1.2rem;
-  color: #636e72;
+  color: #c2c2c2;
+  cursor: pointer;
 }
-#settingsCog:hover
+#settingsCog:hover, #brandIcon:hover
 {
-  color: #2d3436;
+  filter: brightness(115%);
   transform: scale(1.05);
   transition: all .2s ease-in-out;
+  cursor: pointer;
 }
-#settingsCog:active
+#settingsCog:active, #brandIcon:active
 {
+  filter: brightness(90%);
   transform: scale(0.95);
   transition: all .2s ease-in-out;
-  color: #b2bec3;
+  cursor: pointer;
 }
 .form-control
 {
@@ -77,6 +109,7 @@ main img
 #timer
 {
   font-size: 5rem;
+  color: #eee;
 }
 
 #editableTimer
@@ -93,6 +126,17 @@ main img
 /* SPOTIFY */
 
 /* Playlist styles */
+#playlistContainer
+{
+  padding-top: 5%;
+}
+
+.playlistName
+{
+  color: #e0e0e0;
+  font-weight: bold;
+}
+
 .hidden
 {
   display: none;
@@ -111,7 +155,7 @@ main img
 }
 .playlistElement:hover > .playlistCover
 {
-  filter: brightness(70%);
+  filter: brightness(40%);
 }
 
 .playlistCover
@@ -167,7 +211,7 @@ main img
   left: 0;
   bottom: 0;
   width: 100%;
-  background-color: #4d4f4e;
+  background-color: #2b2b2b;
   color: white;
   text-align: center;
   height: 100px;
@@ -175,6 +219,11 @@ main img
 #cpCoverWrapper
 {
   padding: 0.5rem;
+}
+#cpCover
+{
+  width: 70px;
+  height: 70px;
 }
 
 #cpArtist
@@ -194,7 +243,7 @@ main img
 #togglePlayButton:hover
 {
   border: 1px solid white;
-  transform: scale(1.05);
+  transform: scale(1.1);
   transition: all .2s ease-in-out;
 }
 #togglePlayButton:active
@@ -203,6 +252,11 @@ main img
   transition: all .2s ease-in-out;
   color: #adadad;
   border: 1px solid #666966;
+}
+
+.trackControls
+{
+  user-select: none; /*getting rid of text select pointer between elements*/
 }
 
 #previousTrack, #nextTrack
@@ -241,97 +295,63 @@ main img
   filter: brightness(90%);
 }
 
+/* Track position control */
+#trackPosition, #trackDuration
+{
+  font-size: 0.8rem;
+  color: #c2c2c2;
+
+}
+#trackRange
+{
+  width: 25rem;
+}
+.volumeControls
+{
+  user-select: none; /*getting rid of text select pointer between elements*/
+}
 /* Volume control */
 #volumeRange
 {
   width: 10rem;
-  background-color: inherit;
 }
 
-/* http://danielstern.ca/range.css/?ref=css-tricks#/ */
 
-input[type=range] {
-  -webkit-appearance: none;
-  width: 100%;
-  margin: 1.85px 0;
+/* The slider itself https://www.w3schools.com/howto/howto_js_rangeslider.asp   */
+
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 0.4rem;
+  border-radius: 5px;
+  background: #141414; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.85; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
 }
-input[type=range]:focus {
-  outline: none;
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
 }
-input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 6.3px;
-  cursor: pointer;
-  box-shadow: 0.7px 0.7px 1px #000000, 0px 0px 0.7px #0d0d0d;
-  background: #191414;
-  border-radius: 25px;
-  border: 0px solid #010101;
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: #1DB954; /* Green background */
+  cursor: pointer; /* Cursor on hover */
 }
-input[type=range]::-webkit-slider-thumb {
-  box-shadow: 1px 1px 1px #1db954, 0px 0px 1px #20cf5e;
-  border: 0px solid #1db954;
-  height: 10px;
-  width: 10px;
-  border-radius: 100px;
-  background: #1db954;
-  cursor: pointer;
-  -webkit-appearance: none;
-  margin-top: -1.85px;
-}
-input[type=range]:focus::-webkit-slider-runnable-track {
-  background: #271f1f;
-}
-input[type=range]::-moz-range-track {
-  width: 100%;
-  height: 6.3px;
-  cursor: pointer;
-  box-shadow: 0.7px 0.7px 1px #000000, 0px 0px 0.7px #0d0d0d;
-  background: #191414;
-  border-radius: 25px;
-  border: 0px solid #010101;
-}
-input[type=range]::-moz-range-thumb {
-  box-shadow: 1px 1px 1px #1db954, 0px 0px 1px #20cf5e;
-  border: 0px solid #1db954;
-  height: 10px;
-  width: 10px;
-  border-radius: 100px;
-  background: #1db954;
-  cursor: pointer;
-}
-input[type=range]::-ms-track {
-  width: 100%;
-  height: 6.3px;
-  cursor: pointer;
-  background: transparent;
-  border-color: transparent;
-  color: transparent;
-}
-input[type=range]::-ms-fill-lower {
-  background: #0b0909;
-  border: 0px solid #010101;
-  border-radius: 50px;
-  box-shadow: 0.7px 0.7px 1px #000000, 0px 0px 0.7px #0d0d0d;
-}
-input[type=range]::-ms-fill-upper {
-  background: #191414;
-  border: 0px solid #010101;
-  border-radius: 50px;
-  box-shadow: 0.7px 0.7px 1px #000000, 0px 0px 0.7px #0d0d0d;
-}
-input[type=range]::-ms-thumb {
-  box-shadow: 1px 1px 1px #1db954, 0px 0px 1px #20cf5e;
-  border: 0px solid #1db954;
-  height: 10px;
-  width: 10px;
-  border-radius: 100px;
-  background: #1db954;
-  cursor: pointer;
-  height: 6.3px;
-}
-input[type=range]:focus::-ms-fill-lower {
-  background: #191414;
-}
-input[type=range]:focus::-ms-fill-upper {
-  background: #271f1f;
+
+.slider::-moz-range-thumb {
+  width: 0.8rem; /* Set a specific slider handle width */
+  height: 0.8rem;
+  border-radius: 50%;
+  background: #1DB954; /* Green background */
+  cursor: pointer; /* Cursor on hover */
 }
