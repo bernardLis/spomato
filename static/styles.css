@@ -1,6 +1,11 @@
 /* CSS styles for viewports 1000px and less */
 @media (max-width: 1000px)
 {
+  .timerButtons
+  {
+    margin-right: auto 0;
+  }
+
   #playerDesktop
   {
     display: none;
@@ -20,14 +25,30 @@
     height: 50px;
   }
 }
+
 /* CSS styles for viewports 1001px and more */
 @media (min-width: 1001px)
 {
+  .timerButtons
+  {
+    margin: 1.5rem;
+  }
+
   #mobilePlayer
   {
     display: none;
   }
 }
+
+/* CSS styles for viewports 600px and less (timer breaks) */
+@media (max-width: 600px)
+{
+  .timerButtons
+  {
+    margin-right: 0;
+  }
+}
+
 
 .brandContainer a
 {
@@ -69,16 +90,27 @@ body
 }
 
 
-/* TIMER */
-#timerContainer
+#spotifyLogin
 {
-  padding-bottom: 5%;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: 'Lato', sans-serif;
+  filter: brightness(0.95);
+  background: #1DB954;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  padding: 0.5rem 2.2rem 0.5rem 2.2rem;
+  cursor: pointer;
+  letter-spacing: 2px;
+}
+#spotifyLogin:hover
+{
+  filter: brightness(1.05);
 }
 
-.timerButtons
-{
-  user-select: none;
-}
+
+/* SETTINGS */
 
 #settingsCog, #brandIcon
 {
@@ -105,6 +137,21 @@ body
   width: auto;
 }
 
+/* TIMER */
+
+.timerButtons
+{
+  user-select: none;
+}
+#pauseResumeTimer
+{
+  width: 80px;
+}
+
+#timerDad
+{
+  width: 200px;
+}
 
 #timer
 {

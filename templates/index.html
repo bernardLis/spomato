@@ -3,73 +3,14 @@
 {% block title %}
     index
 {% endblock %}
-{#
-{% block nav %}
- SETTINGS
-  <i type="button" class="fas fa-cog" data-toggle="modal" data-target="#exampleModal" id="settingsCog"></i>
 
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="/" method="post">
-          <div id="modalBody" class="modal-body">
-            <div class="form-group row ml-2">
-                <label class="my-auto" for="tomatoT">Tomato</label>
-                <input type="number" min="1" max="60" class="form-control ml-2" name="tomatoT" placeholder="{{ tomatoT }}">
-            </div>
-            <div class="form-group row ml-2">
-              <label class="my-auto" for="breakT">Break</label>
-              <input type="number" min="1" max="60" class="form-control ml-2" name="breakT" placeholder="{{ breakT }}">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" name="btn" class="btn btn-light" value="timerValuesChange">Save changes</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-{% endblock %}
-#}
 {% block main %}
-  {# SPOTIFY #}
-  <form action="/" method="post">
-    <button type="submit" name="btn" class="btn btn-outline-success my-5" id="spotifyLogin" value="spotifyLogIn">Spotify Login</button>
+
+  {# SPOTIFY LOG IN #}
+  <form id="spotifyLogInForm" class="mt-5 ml-2" action="/" method="post">
+    <button type="image" name="btn" id="spotifyLogin" value="spotifyLogIn">SPOTIFY LOGIN</button>
   </form>
 
-
-  {# TIMER #}
-  <div class ="row">
-    <div class="mx-auto">
-        <button type="button" class="btn btn-outline-danger btn-lg mx-3" id="tomatoTimer">Tomato</button>
-        <button type="button" class="btn btn-outline-danger btn-lg mx-2" id="breakTimer">Break</button>
-    </div>
-  </div>
-  <div class ="row">
-    <div class="mx-auto">
-        <button type="button" class="btn btn-primary mx-sm" id="tenS">10s</button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="container mx-auto">
-      <div id="timerDad" class=col-5-sm>
-        <p id="timer">00:00</p>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="mx-auto">
-      <div class="container">
-        <button class="btn btn-light mx-sm resumeTimer" id="pauseResumeTimer">Start</button>
-      </div>
-    </div>
-  </div>
 
   <script>
     var tomatoT = {{ tomatoT }}

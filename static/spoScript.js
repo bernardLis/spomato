@@ -577,7 +577,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   // Setting functions to the elements
   document.getElementById("tomatoTimer").addEventListener("click", tomatoTimer);
   document.getElementById("breakTimer").addEventListener("click", breakTimer);
-  document.getElementById("tenS").addEventListener("click", tenS);
 
   var timerDisplay = document.getElementById("timer");
 
@@ -738,14 +737,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   function breakTimer()
   {
     timerValue = breakT * 60 * 1000;
-    n = -1 * 1000;
-    timer.reset();
-  }
-
-  // Set timer to 10 sec, for tests.
-  function tenS()
-  {
-    timerValue = 10 * 1000;
     n = -1 * 1000;
     timer.reset();
   }
@@ -948,4 +939,32 @@ function setRepeat(state)
       console.log(data)
     }
   })
+}
+
+/* MEDIA */
+
+var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+
+
+// For devices with screen width of less than 600
+if (width < 600)
+{
+
+  // Change the design of timer buttons
+  var tomatoTimer = document.getElementById("tomatoTimer");
+  var breakTimer = document.getElementById("breakTimer");
+  var buttonDivider =document.getElementById("buttonDivder").style.display = "none";
+  var timerDad = document.getElementById("timerDad");
+
+  tomatoTimer.classList.remove("btn-block");
+  breakTimer.classList.remove("btn-block");
+  breakTimer.classList.remove("mt-2");
+  timerDad.classList.remove("mr-3");
+  timerDad.classList.remove("ml-1");
+  timerContainer.classList.remove("mr-5")
+
+
+  tomatoTimer.classList.add("d-inline");
+  breakTimer.classList.add("d-inline");
+  timerDad.classList.add("mx-auto")
 }

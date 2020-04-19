@@ -1,10 +1,15 @@
+pip install --target=C:\Python38-32\Lib\site-packages requests requests_oauthlib
+
 
 pip3 install -r requirements.txt
 
 $env:FLASK_APP = "application.py"
-python -m flask run
+flask run
 
 
+$env:SPOTIPY_CLIENT_ID = "b7c4807138a84147bd1147b9bf602048"
+$env:SPOTIPY_CLIENT_SECRET = "699795974a5d467e900b64b3018d09d4"
+$env:SPOTIPY_REDIRECT_URI = "https://www.google.com/"
 
 I've started working on add a customer timer button in settings:
 

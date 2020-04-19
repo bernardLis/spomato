@@ -8,7 +8,6 @@
 // Setting functions to the elements
 document.getElementById("tomatoTimer").addEventListener("click", tomatoTimer);
 document.getElementById("breakTimer").addEventListener("click", breakTimer);
-document.getElementById("tenS").addEventListener("click", tenS);
 
 var timerDisplay = document.getElementById("timer");
 
@@ -171,14 +170,6 @@ function breakTimer()
   timer.reset();
 }
 
-// Set timer to 10 sec, for tests.
-function tenS()
-{
-  timerValue = 10 * 1000;
-  n = -1 * 1000;
-  timer.reset();
-}
-
 // Timer helper class from: https://stackoverflow.com/questions/8126466/how-do-i-reset-the-setinterval-timer
 function Timer(fn, t) {
   var timerObj = setInterval(fn, t);
@@ -238,4 +229,34 @@ var resumePauseTimerToggler = function()
       document.getElementById("pauseResumeTimer").innerHTML = "Resume";
     }
   }
+}
+
+/* MEDIA */
+
+var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+
+
+// For devices with screen width of less than 600
+if (width < 600)
+{
+
+  // Change the design of timer buttons
+  var tomatoTimer = document.getElementById("tomatoTimer");
+  var breakTimer = document.getElementById("breakTimer");
+  var buttonDivider =document.getElementById("buttonDivder").style.display = "none";
+  var timerDad = document.getElementById("timerDad");
+  var spotifyLogInForm = document.getElementById("spotifyLogInForm");
+
+  tomatoTimer.classList.remove("btn-block");
+  breakTimer.classList.remove("btn-block");
+  breakTimer.classList.remove("mt-2");
+  timerDad.classList.remove("mr-3");
+  timerDad.classList.remove("ml-1");
+  timerContainer.classList.remove("mr-5");
+  spotifyLogInForm.classList.remove("ml-2");
+
+
+  tomatoTimer.classList.add("d-inline");
+  breakTimer.classList.add("d-inline");
+  timerDad.classList.add("mx-auto");
 }

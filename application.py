@@ -21,6 +21,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology
 
+from requests_oauthlib import OAuth2Session
+
 # Configure application
 app = Flask(__name__)
 
@@ -45,6 +47,7 @@ Session(app)
 API_BASE = 'https://accounts.spotify.com'
 # Make sure you add this to Redirect URIs in the setting of the application dashboard
 REDIRECT_URI = "http://127.0.0.1:5000/api_callback"
+
 # Spotify variables
 CLI_ID = "b7c4807138a84147bd1147b9bf602048"
 CLI_SEC = "699795974a5d467e900b64b3018d09d4"
