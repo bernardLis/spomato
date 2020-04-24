@@ -1,15 +1,7 @@
-
-/**
-* SPOTIFY SDK
-*/
-
-console.log("refreshToken", refreshToken);
-
 // Variables I want to be global are here (device_id, duration)
 var globalVars = {};
 
 // Spotify SDK
-// TODO: figure out refereshing tokens
 window.onSpotifyWebPlaybackSDKReady = () =>
 {
   const player = new Spotify.Player
@@ -19,18 +11,19 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     // Get OAuth token:
     getOAuthToken: cb =>
     {
+      // This function is supposed to return a token and refresh it if needed.
+      refreshOauthToken();
       cb(token);
     }
   });
   // Error handling
   player.addListener('initialization_error', ({ message }) => { console.error("initialization error", message); });
-  player.addListener('authentication_error', ({ message }) => { console.error("failed to authenticate", message); });
+  player.addListener('authentication_error', ({ message }) => { console.error("failed to authenticate!!", message); });
   player.addListener('account_error', ({ message }) => { console.error("account error", message); });
   player.addListener('playback_error', ({ message }) => { console.error("playback error", message); });
 
   // Ready
   player.addListener('ready', ({ device_id }) => {
-    console.log('Ready with Device ID', device_id);
     // Pushing device_id to playerVar object
     globalVars.id = device_id;
   });
@@ -45,8 +38,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
 
   /*
    * Every playlist has a play / pause button
-   * It shows which playlist is being played
-   * TODO: the button does not dissapear after you click pause - you should be able to resume the playlist
+   * Play / Pause / Resume functionalities
   */
 
   // Play button is only visible when mouse is hovering on the playlist element
@@ -58,7 +50,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     // Show play button on mouse enter
     playlistElements[i].addEventListener("mouseenter", function(e)
     {
-      // Find play button > show it (if it exsits!!)
+      // Find play button and show it
       var c = playlistElements[i].children;
       var cc = c[1].children;
       var ccc = cc[0].children;
@@ -67,16 +59,15 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       {
         if(cccc.classList[j] == "playButton")
         {
-          cccc.classList.add("visible");
           cccc.classList.add("fa");
           cccc.classList.remove("hidden");
         }
       }
     })
-    // Hide play button on leave
+    // Hide play button on mouse leave
     playlistElements[i].addEventListener("mouseleave", function(e)
     {
-      // Find play button > hide it (if it exsits!!)
+      // Find play button and hide it
       var c = playlistElements[i].children;
       var cc = c[1].children;
       var ccc = cc[0].children;
@@ -85,7 +76,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       {
         if(cccc.classList[j] == "playButton")
         {
-          cccc.classList.remove("visible");
           cccc.classList.remove("fa");
           cccc.classList.add("hidden");
         }
@@ -93,14 +83,18 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     })
   }
 
-  /*Play / Pause functionalities */
-  // Get button elements
+  // Play / Pause / Resume functionalities on playlist button
   var togglePlayPlaylist = document.getElementsByClassName("togglePlayPlaylist");
   var togglePlayPlaylistL = togglePlayPlaylist.length
 
+  //const list = ['first', 'second', 'third']; element.classList.add(...list);
+  const pauseClasses = ["pauseButton", "fa", "fa-pause", "visible", "fa-volume-up", "playing"];
+  const resumeClasses = ["resumeButton", "fa", "fa-play", "visible", "playing"];
+  const playClasses = ["playButton", "fa-play", "hidden"];
+
   for (let i = 0; i < togglePlayPlaylistL; i++)
   {
-    // On click functionalities - will change depending on class
+    // On click functionality - will change depending on class
     togglePlayPlaylist[i].addEventListener("click", function()
     {
       // Iterating on classes
@@ -112,23 +106,25 @@ window.onSpotifyWebPlaybackSDKReady = () =>
           // Pausing player
           player.pause();
 
-          // Adding play classes
-          togglePlayPlaylist[i].classList.add("playButton");
-          togglePlayPlaylist[i].classList.add("fa-play");
-          togglePlayPlaylist[i].classList.add("hidden");
-
           // Removing pause classes
-          togglePlayPlaylist[i].classList.remove("pauseButton");
-          togglePlayPlaylist[i].classList.remove("fa");
-          togglePlayPlaylist[i].classList.remove("visible");
-          togglePlayPlaylist[i].classList.remove("fa-volume-up");
-          togglePlayPlaylist[i].classList.remove("playing");
+          togglePlayPlaylist[i].classList.remove(...pauseClasses);
 
-          // Changing the player toggle play button
-          var togglePlayButton = document.getElementById("togglePlayButton");
-          togglePlayButton.classList.remove("fa-pause");
-          togglePlayButton.classList.add("fa-play");
+          // Adding resume classes
+          togglePlayPlaylist[i].classList.add(...resumeClasses);
+          return;
+        }
 
+        // Resume functionality
+        else if (togglePlayPlaylist[i].classList[j] == "resumeButton")
+        {
+          // Resuming player
+          player.resume();
+
+          // Removing resume classes
+          togglePlayPlaylist[i].classList.remove(...resumeClasses);
+
+          // Adding pause classes
+          togglePlayPlaylist[i].classList.add(...pauseClasses);
           return;
         }
 
@@ -143,25 +139,19 @@ window.onSpotifyWebPlaybackSDKReady = () =>
             {
               if (togglePlayPlaylist[k].classList[l] == "playing")
               {
-                // If another playlist was clicked add play button to the previously played playlist
+                // If a different playlist was clicked - add play button to the previously played playlist
                 if (k != i)
                 {
-                  // Adding play classes
-                  togglePlayPlaylist[k].classList.add("playButton");
-                  togglePlayPlaylist[k].classList.add("fa-play");
-                  togglePlayPlaylist[k].classList.add("hidden");
+                  // Remove pause and resume classes
+                  togglePlayPlaylist[k].classList.remove(...resumeClasses);
+                  togglePlayPlaylist[k].classList.remove(...pauseClasses);
 
-                  // Removing pause classes
-                  togglePlayPlaylist[k].classList.remove("pauseButton");
-                  togglePlayPlaylist[k].classList.remove("fa");
-                  togglePlayPlaylist[k].classList.remove("visible");
-                  togglePlayPlaylist[k].classList.remove("fa-volume-up");
-                  togglePlayPlaylist[k].classList.remove("playing");
+                  // Add play classes
+                  togglePlayPlaylist[k].classList.add(...playClasses);
                 }
               }
             }
           }
-
           // Get the parent node
           p = togglePlayPlaylist[i].parentNode;
 
@@ -169,22 +159,10 @@ window.onSpotifyWebPlaybackSDKReady = () =>
           play(p.dataset.playlisturi);
 
           // Removing play classes
-          togglePlayPlaylist[i].classList.remove("playButton");
-          togglePlayPlaylist[i].classList.remove("fa-play");
-          togglePlayPlaylist[i].classList.remove("hidden");
+          togglePlayPlaylist[i].classList.remove(...playClasses);
 
-          // Adding pause classes
-          togglePlayPlaylist[i].classList.add("pauseButton");
-          togglePlayPlaylist[i].classList.add("fa");
-          togglePlayPlaylist[i].classList.add("visible");
-          togglePlayPlaylist[i].classList.add("fa-volume-up");
-          togglePlayPlaylist[i].classList.add("playing");
-
-          // Changing the player toggle play button
-          var togglePlayButton = document.getElementById("togglePlayButton");
-          togglePlayButton.classList.add("fa-pause");
-          togglePlayButton.classList.remove("fa-play");
-
+          // Add pause classes
+          togglePlayPlaylist[i].classList.add(...pauseClasses);
           return;
         }
       }
@@ -224,7 +202,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   player.addListener('player_state_changed',
   ({position, duration, track_window: { current_track }}) =>
   {
-    // Pushing duration to my array
+    // Pushing duration to the global array
     globalVars.duration = current_track["duration_ms"];
 
     // Displaying the track duration
@@ -243,57 +221,56 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     document.getElementById("cpCoverMobile").src = current_track['album']['images'][0]['url'];
     document.getElementById("cpNameMobile").innerHTML = current_track['name'];
     document.getElementById("cpArtistMobile").innerHTML = current_track['artists'][0]['name'];
+  });
 
 
+  // Scrolling long text on track and artist name
+  // https://jsfiddle.net/MadLittleMods/nsMWX/
+  $(".scroll_on_hover").mouseover(function()
+  {
+    $(this).removeClass("ellipsis");
+    var maxscroll = $(this).width();
+    var speed = 4000;
+    $(this).animate(
+    {
+      scrollLeft: maxscroll
+    }, speed, "linear",)
+  });
+
+  $(".scroll_on_hover").mouseout(function()
+  {
+    $(this).stop();
+    $(this).addClass("ellipsis");
+    $(this).animate({
+        scrollLeft: 0
+    }, 'slow');
   });
 
   // Toggle play functionality
   var togglePlayButton = document.getElementById("togglePlayButton");
-  togglePlayButton.addEventListener("click", function()
-  {
-    // Toggle playback
-    player.togglePlay();
-    // Toggle button appearances
-    for (var i = 0; i < togglePlayButton.classList.length; i++)
-    {
-      // If user clicks on play swap it to pause
-      if (togglePlayButton.classList[i] == "fa-play")
-      {
-        togglePlayButton.classList.remove("fa-play");
-        togglePlayButton.classList.add("fa-pause");
-        return;
-      }
-      // If user clicks on pause swap it to play
-      if (togglePlayButton.classList[i] == "fa-pause")
-      {
-        togglePlayButton.classList.remove("fa-pause");
-        togglePlayButton.classList.add("fa-play");
-        return;
-      }
-    }
-  })
+  togglePlayButton.addEventListener("click", togglePlayFunction);
+
 
   /* Next and previous track functionalities */
   var previousTrackButton = document.getElementById("previousTrack");
   var nextTrackButton = document.getElementById("nextTrack");
+  previousTrackButton.addEventListener("click", function() { player.previousTrack(); })
+  nextTrackButton.addEventListener("click", function() { player.nextTrack(); })
 
-  previousTrackButton.addEventListener("click", function()
-  {
-    player.previousTrack();
-  })
+  /*  Next and previous tracks for mobile */
+  var previousTrackMobileButton = document.getElementById("previousTrackMobile");
+  var nextTrackMobileButton = document.getElementById("nextTrackMobile");
+  previousTrackMobileButton.addEventListener("click", function() { player.previousTrack(); })
+  nextTrackMobileButton.addEventListener("click", function() { player.nextTrack(); })
 
-  nextTrackButton.addEventListener("click", function()
-  {
-    player.nextTrack();
-  })
+  /* Shuffle, repeat
+   * Resume/pause button switching
+  */
 
-  /* Shuffle, repeat functionalities and resume/pause check */
   // Playback status updates
   player.addListener('player_state_changed', state =>
   {
-
-    /* Resume / pause button check on player status change */
-    // Check if state is paused and button has incorrect class - change it
+    // Check if state is paused and change the button class
     if (state["paused"] == true)
     {
       for (var i = 0; i < togglePlayButton.classList.length; i++)
@@ -318,7 +295,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
         }
       }
     }
-    /* same as above but for mobile */
+    // Same as above but for mobile
     // Check if state is paused and button has incorrect class - change it
     if (state["paused"] == true)
     {
@@ -345,7 +322,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       }
     }
 
-    /* Some shuffle logic */
+    // Some shuffle logic
     // Store the shuffle value in my global variable
     globalVars.shuffle = state["shuffle"];
 
@@ -362,7 +339,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       shuffleButton.style.color = "#c2c2c2";
     }
 
-    /*Some repeat logic*/
+    // Some repeat logic
     // Store the repeat value in my global variable
     globalVars.repeat = state["repeat_mode"];
     // Change the repeat button when repeat state changes
@@ -385,10 +362,9 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       // Change the color of the repeat button
       repeatButton.style.color = "red";
     }
-
   });
 
-  /*Shuffle functionality*/
+  /* Shuffle functionality */
   var shuffleButton = document.getElementById("toggleShuffle");
   shuffleButton.addEventListener("click", function()
   {
@@ -399,7 +375,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       toggleShuffle("false");
     }
 
-    // Else shuffle is off and I want to turn it on
+    // Else shuffle is off - turn it on
     else
     {
       // Send request to spotify
@@ -407,7 +383,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     }
   })
 
-  /*Repeat functionality*/
+  // Repeat functionality
   var repeatButton = document.getElementById("toggleRepeat");
 
   repeatButton.addEventListener("click", function()
@@ -438,7 +414,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     // Getting the volume
     player.getVolume().then(volume =>
     {
-
       // Muting
       if (volume != null)
       {
@@ -455,8 +430,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
         // Changing icons
         volumeMute.classList.remove("fa-volume-up");
         volumeMute.classList.add("fa-volume-mute");
-
-
       }
       // Unmuting
       else
@@ -467,7 +440,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
           volumeRange.value = globalVars.volume;
           player.setVolume(globalVars.volume / 100);
         }
-        // Else setting it to 40%
+        // Else setting it to 50%
         else
         {
           volumeRange.value = "50";
@@ -480,7 +453,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
 
         // Adding the background range color
         volumeRange.style.background = 'linear-gradient(to right, #787878 0%, #787878 ' + volumeRange.value + '%, #141414 ' + volumeRange.value + '%, #141414 100%)';
-
       }
     });
   })
@@ -567,9 +539,84 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   // Function for track range change
   onRangeChange(trackRange, seekTrackListener);
 
+  /* Keyboard shortcuts */
+
+  document.addEventListener('keydown', event =>
+  {
+    // Preventing scrolling on space click
+    if (event.code === 'Space')
+    {
+      event.preventDefault();
+    }
+  })
+
+  document.addEventListener('keyup', event =>
+  {
+    if (event.code === 'Space')
+    {
+      // Toggle playback
+      player.togglePlay();
+
+      // Toggle button appearances
+      for (var i = 0; i < togglePlayButton.classList.length; i++)
+      {
+        // If user clicks on play swap it to pause
+        if (togglePlayButton.classList[i] == "fa-play")
+        {
+          // Find which playlist is played and swap buttons
+          for (let j = 0; j < togglePlayPlaylistL; j++)
+          {
+            // Iterating on classes
+            for (var k = 0; k < togglePlayPlaylist[j].classList.length; k++)
+            {
+              if (togglePlayPlaylist[j].classList[k] == "playing")
+              {
+                // Removing resume classes
+                togglePlayPlaylist[j].classList.remove(...resumeClasses);
+
+                // Adding pause classes
+                togglePlayPlaylist[j].classList.add(...pauseClasses);
+              }
+            }
+          }
+          return;
+        }
+        // If user clicks on pause swap it to play
+        if (togglePlayButton.classList[i] == "fa-pause")
+        {
+          // Find which playlist is played and swap buttons
+          for (let j = 0; j < togglePlayPlaylistL; j++)
+          {
+            // Iterating on classes
+            for (var k = 0; k < togglePlayPlaylist[j].classList.length; k++)
+            {
+              if (togglePlayPlaylist[j].classList[k] == "playing")
+              {
+                // Removing resume classes
+                togglePlayPlaylist[j].classList.remove(...pauseClasses);
+
+                // Adding pause classes
+                togglePlayPlaylist[j].classList.add(...resumeClasses);
+              }
+            }
+          }
+          return;
+        }
+      }
+    }
+    if (event.code === "ArrowLeft")
+    {
+      player.previousTrack();
+    }
+    if (event.code === "ArrowRight")
+    {
+      player.nextTrack();
+    }
+  })
+
+
   /**
    * TIMER LOGIC
-   * TODO: add a button for a new timer
    * TODO: after double clicking multiple times on timer it "breaks"
    * TODO: add hours to the timer?
    */
@@ -809,142 +856,77 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   }
 
   /*
-   * MOBILE!
-   *
+   * Mobile player
+   * Toggle play
+   * Previous and next song
   */
   // Toggle play functionality
   var togglePlayButtonMobile = document.getElementById("togglePlayButtonMobile");
-  togglePlayButtonMobile.addEventListener("click", function()
+  togglePlayButtonMobile.addEventListener("click", togglePlayFunction);
+
+  /* SDK Helpers */
+  function togglePlayFunction()
   {
+    // Playlist toggle play buttons
+    var togglePlayPlaylist = document.getElementsByClassName("togglePlayPlaylist");
+    var togglePlayPlaylistL = togglePlayPlaylist.length
+
     // Toggle playback
     player.togglePlay();
     // Toggle button appearances
-    for (var i = 0; i < togglePlayButtonMobile.classList.length; i++)
+    for (var i = 0; i < this.classList.length; i++)
     {
-      // If user clicks on play swap it to pause
-      if (togglePlayButtonMobile.classList[i] == "fa-play")
+      // If user clicks on play
+      if (this.classList[i] == "fa-play")
       {
-        togglePlayButtonMobile.classList.remove("fa-play");
-        togglePlayButtonMobile.classList.add("fa-pause");
+        // Find which playlist is played and swap buttons
+        for (let j = 0; j < togglePlayPlaylistL; j++)
+        {
+          // Iterating on classes
+          for (var k = 0; k < togglePlayPlaylist[j].classList.length; k++)
+          {
+            if (togglePlayPlaylist[j].classList[k] == "playing")
+            {
+              // Removing resume classes
+              togglePlayPlaylist[j].classList.remove(...resumeClasses);
+
+              // Adding pause classes
+              togglePlayPlaylist[j].classList.add(...pauseClasses);
+            }
+          }
+        }
         return;
       }
-      // If user clicks on pause swap it to play
-      if (togglePlayButtonMobile.classList[i] == "fa-pause")
+      // If user clicks on pause
+      if (this.classList[i] == "fa-pause")
       {
-        togglePlayButtonMobile.classList.remove("fa-pause");
-        togglePlayButtonMobile.classList.add("fa-play");
+        // Find which playlist is played and swap buttons
+        for (let j = 0; j < togglePlayPlaylistL; j++)
+        {
+          // Iterating on classes
+          for (var k = 0; k < togglePlayPlaylist[j].classList.length; k++)
+          {
+            if (togglePlayPlaylist[j].classList[k] == "playing")
+            {
+              // Removing resume classes
+              togglePlayPlaylist[j].classList.remove(...pauseClasses);
+
+              // Adding pause classes
+              togglePlayPlaylist[j].classList.add(...resumeClasses);
+            }
+          }
+        }
         return;
       }
     }
-  })
+  }
 
 }; // end of SDK
 
-/* Helpers*/
-
-// https://stackoverflow.com/questions/18544890/onchange-event-on-input-type-range-is-not-triggering-in-firefox-while-dragging
-// Function to grab range changes
-function onRangeChange(r,f) {
-  var n,c,m;
-  r.addEventListener("input",function(e){
-    n=1;c=e.target.value;if(c!=m)f(e);m=c;
-    this.style.background = 'linear-gradient(to right, #787878 0%, #787878 ' + this.value + '%, #141414 ' + this.value + '%, #141414 100%)'
-  });
-  r.addEventListener("change",function(e){
-    if(!n)f(e);
-    this.style.background = 'linear-gradient(to right, #787878 0%, #787878 ' + this.value + '%, #141414 ' + this.value + '%, #141414 100%)'
-  });
-}
-
-// https://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
-// Function to convert seconds to hh:mm:ss
-String.prototype.toHHMMSS = function ()
-{
-    var sec_num = parseInt(this, 10); // don't forget the second param
-    var hours   = Math.floor(sec_num / 3600);
-    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    var seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-    if (hours   < 10) {hours = hours;}
-    if (minutes < 10) {minutes = minutes;}
-    if (seconds < 10) {seconds = "0"+seconds;}
-
-    if (hours == 0)
-    {
-      return minutes+':'+seconds;
-    }
-    else
-    {
-      return hours+':'+minutes+':'+seconds;
-    }
-}
-
-/* Requests to Spotify */
-
-// Play a specified track on the Web Playback SDK's device ID
-// https://glitch.com/edit/#!/spotify-web-playback?path=script.js:67:0
-function play(uri)
-{
-  // Official info: https://developer.spotify.com/console/put-play/
-  // Preping data object to send it to Spotify
-  var uriData = '{"context_uri":' + '"' + uri + '"' + "}";
-
-  $.ajax({
-    url: "https://api.spotify.com/v1/me/player/play?device_id=" + globalVars.id,
-    type: "PUT",
-    data: uriData,
-    beforeSend: function(xhr, data)
-    {
-      console.log("before send data: ", data)
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token );
-    },
-    success: function(data)
-    {
-      console.log(data)
-    }
-  });
-}
-
-function toggleShuffle(state)
-{
-  // Send request to spotify
-  $.ajax({
-    url: "https://api.spotify.com/v1/me/player/shuffle?state=" + state + "&device_id=" + globalVars.id,
-    type: "PUT",
-    beforeSend: function(xhr, data)
-    {
-      console.log("before send data: ", data)
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token );
-    },
-    success: function(data)
-    {
-      console.log(data)
-    }
-  })
-}
-
-function setRepeat(state)
-{
-  // Send request to spotify
-  $.ajax({
-    url: "https://api.spotify.com/v1/me/player/repeat?state=" + state + "&device_id=" + globalVars.id,
-    type: "PUT",
-    beforeSend: function(xhr, data)
-    {
-      console.log("before send data: ", data)
-      xhr.setRequestHeader('Authorization', 'Bearer ' + token );
-    },
-    success: function(data)
-    {
-      console.log(data)
-    }
-  })
-}
 
 /* MEDIA */
 
 var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-
 
 // For devices with screen width of less than 600
 if (width < 600)
@@ -962,7 +944,6 @@ if (width < 600)
   timerDad.classList.remove("mr-3");
   timerDad.classList.remove("ml-1");
   timerContainer.classList.remove("mr-5")
-
 
   tomatoTimer.classList.add("d-inline");
   breakTimer.classList.add("d-inline");

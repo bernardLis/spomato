@@ -7,6 +7,7 @@
 {% block main %}
 
   {# SPOTIFY #}
+
   <div id="playlistContainer">
     {% for item in playlists["items"]: %}
     {# if you add / remove any elements here you may break the javascript for pause/play logic #}
@@ -45,10 +46,10 @@
         </div>
 
         <div class="col-md-2 my-auto">
-          <div id="cpName" class="text-left">
+          <div id="cpName" class="text-left scroll_on_hover ellipsis">
             miau miau miau!
           </div>
-          <div id="cpArtist" class="text-left">
+          <div id="cpArtist" class="text-left scroll_on_hover ellipsis">
             a cat
           </div>
         </div>
@@ -82,22 +83,25 @@
     </div>
   </div>
 
-  <div id="mobilePlayer" class="container-fluid playerContainer ">
-    <div class="currentlyPlayedSong mt-2 d-flex justify-content-between align-items-center">
+  <div id="mobilePlayer" class="container-fluid flex-row playerContainer ">
+    <div class="currentlyPlayedSong mt-2 d-flex container-fluid align-items-center justify-content-between">
       <div class="d-flex justify-content-right">
         <img id="cpCoverMobile" src="https://placekitten.com/300/300"/>
 
         <div class="ml-2">
-          <div id="cpNameMobile" class="text-left">
+          <div id="cpNameMobile" class="text-left scroll_on_hover ellipsis">
             miau miau miau!
           </div>
-          <div id="cpArtistMobile" class="text-left">
+          <div id="cpArtistMobile" class="text-left scroll_on_hover ellipsis">
             a cat
           </div>
         </div>
       </div>
-
-      <i id="togglePlayButtonMobile" class="mx-3 d-inline fa-play fa"></i>
+      <div class="d-flex">
+        <i id="previousTrackMobile" class="d-inline fas fa-step-backward"></i>
+        <i id="togglePlayButtonMobile" class="mx-3 d-inline fa-play fa"></i>
+        <i id="nextTrackMobile" class="d-inline fas fa-step-forward"></i>
+      </div>
 
     </div>
   </div>
@@ -111,5 +115,7 @@
 
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script src="/static/spoScript.js"></script>
+  <script src="/static/helpers.js"></script>
+
 
 {% endblock %}

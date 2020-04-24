@@ -89,6 +89,12 @@ body
   background-color: #171717;
 }
 
+.modal-content
+{
+  color: #e0e0e0;
+  background-color: #171717;
+}
+
 
 #spotifyLogin
 {
@@ -272,10 +278,24 @@ body
   width: 70px;
   height: 70px;
 }
+.ellipsis
+{
+  text-overflow: ellipsis;
+}
+#cpName
+{
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%
+}
 
 #cpArtist
 {
   font-size: 0.8rem;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%
+
 }
 
 #togglePlayButton
