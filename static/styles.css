@@ -48,6 +48,18 @@
     margin-right: 0;
   }
 }
+/* https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 
 
 .brandContainer a
@@ -124,14 +136,14 @@ body
   color: #c2c2c2;
   cursor: pointer;
 }
-#settingsCog:hover, #brandIcon:hover
+#settingsCog:hover, #brandIcon:hover, #alarmCollapser:hover
 {
   filter: brightness(115%);
   transform: scale(1.05);
   transition: all .2s ease-in-out;
   cursor: pointer;
 }
-#settingsCog:active, #brandIcon:active
+#settingsCog:active, #brandIcon:active, #alarmCollapser:active
 {
   filter: brightness(90%);
   transform: scale(0.95);
@@ -173,6 +185,57 @@ body
 {
   outline: none;
   border: none;
+}
+
+/* AlARM */
+#alarmCollapser
+{
+  width: 50px;
+  user-select: none;
+  cursor: pointer;
+  color: #e0e0e0;
+}
+
+#alarmContainer
+{
+  color: #e0e0e0;
+  text-align: left;
+}
+.select
+{
+  width: 8rem;
+  height: 1.5rem;
+  font-size: 1rem;
+  outline: none;
+  border: none;
+  color: #e0e0e0;
+  font-weight: bold;
+  background-color: #171717;
+}
+.inputfile
+{
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+#inputAlarmLabel
+{
+  font-weight: bold;
+}
+
+#alarmVolumeInput
+{
+  width: 1.7rem;
+  outline: none;
+  border: none;
+  color: #e0e0e0;
+  font-weight: bold;
+  background-color: #171717;
+}
+/* custom checkbox checked color */
+.custom-checkbox .custom-control-input:checked~ .custom-control-label::before
+{
+  background: #1DB954;
 }
 
 

@@ -23,6 +23,10 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
+        <!-- Audio library for js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.1/howler.min.js"></script>
+
+
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&family=Signika:wght@600&display=swap" rel="stylesheet">
 
         <title>Rat: {% block title %}{% endblock %}</title>
@@ -99,6 +103,49 @@
                 <button class="btn btn-light resumeTimer" id="pauseResumeTimer">Start</button>
 
             </div>
+
+            {# ALARM #}
+            <h3 class="mx-auto" id="alarmCollapser"><i id="alarmCollapserIcon" class="fas fa-angle-down"></i></h3>
+
+            <div class="visible" id="alarmCC">
+              <div class="d-flex justify-content-center container">
+
+                <div class="" id="alarmContainer">
+
+                  <h5>When the timer runs out:</h5>
+                  {% if (route == "/afterLogin/") %}
+                    <div class="ml-2 custom-control custom-checkbox">
+                      <input type="checkbox" class="checkbox custom-control-input" id="alarmMusicStop" checked>
+                      <label class="custom-control-label" for="alarmMusicStop">Stop playing the music</label>
+                    </div>
+                  {% endif %}
+                  <div class="ml-2 custom-control custom-checkbox" id="playAlarmContainer">
+                    <input type="checkbox" class="checkbox custom-control-input" id="alarmPlayAlarm">
+                    <label class="custom-control-label" for="alarmPlayAlarm">Play </label>
+                    <select id="alarmSelection" class="select">
+                      {% for alarm in alarms %}
+                        {% if loop.first %}
+                          <option value="/static/alarms/{{alarm}}" selected>{{ alarm[:-4] }}</option>
+                        {% else %}
+                          <option value="/static/alarms/{{alarm}}">{{ alarm[:-4] }}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+
+                    <p class="d-inline">at</p>
+                    <input id="alarmVolumeInput" type="number" min="1" max="100" placeholder="50" class="d-inline">
+                    <span class="d-inline">% volume</span>
+                  </div>
+                  <div class="ml-2 custom-control custom-checkbox">
+                    <input type="checkbox" class="checkbox custom-control-input" id="alarmNotification">
+                    <label class="custom-control-label" for="alarmNotification">Display a notification</label>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
             {% block main %}{% endblock %}
         </main>
 

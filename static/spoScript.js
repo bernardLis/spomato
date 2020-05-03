@@ -664,8 +664,27 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       document.getElementById("pauseResumeTimer").innerHTML = "Start";
       timer.stop();
 
+      /* ALARM */
+      // Getting checkboxes
+      var alarmMusicStop = document.getElementById("alarmMusicStop");
+      var alarmPlayAlarm = document.getElementById("alarmPlayAlarm");
+      var alarmNotification = document.getElementById("alarmNotification");
+
       // Pause Spotify playback
-      player.pause();
+      if (alarmMusicStop.checked)
+      {
+        player.pause();
+      }
+      // Play an alarm
+      if (alarmPlayAlarm.checked)
+      {
+        // Play the selected alarm and selected volume
+        playAlarm();
+      }
+      if (alarmNotification.checked)
+      {
+        notify();
+      }
     }
   }, 1000);
 
@@ -757,6 +776,8 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     $this.remove();
   });
 
+
+
   // Pasue - Resume button functionality
   function pauseResumeTimer(e)
   {
@@ -822,9 +843,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
         document.getElementById("pauseResumeTimer").innerHTML = "Pause";
 
         return this.stop().start();
-
-        // Resume Spotify playback
-        player.resume();
     }
   }
 
@@ -854,6 +872,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       }
     }
   }
+
 
   /*
    * Mobile player
@@ -923,6 +942,124 @@ window.onSpotifyWebPlaybackSDKReady = () =>
 
 }; // end of SDK
 
+/*
+ * Alarm helpers
+ *
+*/
+
+// Collapse alarm section
+var alarmCollapser = document.getElementById("alarmCollapser");
+var alarmCollapserIcon = document.getElementById("alarmCollapserIcon");
+var playlistContainer = document.getElementById("playlistContainer");
+
+alarmCollapser.addEventListener("click", function()
+{
+  var alarmCC = document.getElementById("alarmCC");
+  // Iterating on classes
+  for (var i = 0; i < alarmCC.classList.length; i++)
+  {
+    // Collapse alarm section
+    if (alarmCC.classList[i] == "visible")
+    {
+      alarmCC.classList.remove("visible");
+      alarmCC.classList.add("hidden");
+
+      playlistContainer.classList.remove("visible");
+      playlistContainer.classList.add("hidden");
+
+      alarmCollapserIcon.classList.remove("fa-angle-down");
+      alarmCollapserIcon.classList.add("fa-angle-up");
+
+      return;
+    }
+    // Show alarm Section
+    else if (alarmCC.classList[i] == "hidden")
+    {
+      alarmCC.classList.remove("hidden");
+      alarmCC.classList.add("visible");
+
+      playlistContainer.classList.remove("hidden");
+      playlistContainer.classList.add("visible");
+
+      alarmCollapserIcon.classList.remove("fa-angle-up");
+      alarmCollapserIcon.classList.add("fa-angle-down");
+
+      return;
+    }
+  }
+})
+
+// Play selected alarm on change in selection
+var alarmSelection = document.getElementById("alarmSelection");
+alarmSelection.addEventListener("change", function()
+{
+  playAlarm();
+})
+
+var alarmVolumeSelection = document.getElementById("alarmVolumeInput");
+alarmVolumeSelection.addEventListener("focusout", function()
+{
+  playAlarm();
+})
+
+// Play the alarm - https://howlerjs.com/
+function playAlarm()
+{
+  // What to play
+  var selected = document.getElementById("alarmSelection");
+  var url = selected.options[selected.selectedIndex].value;
+
+  // At what volume to play it
+  var volume = document.getElementById("alarmVolumeInput").value;
+  if (volume == null || isNaN(volume) || volume == 0)
+  {
+    volume = 0.5;
+  }
+  else
+  {
+    volume = volume / 100;
+  }
+
+  // Actual alarm
+  var alarm = new Howl
+  ({
+    src: [url],
+    volume: volume,
+  });
+  alarm.play();
+}
+
+// Handle notifications
+// https://developer.mozilla.org/en-US/docs/Web/API/notification
+function notify()
+{
+  // Let's check if the browser supports notifications
+  if (!("Notification" in window))
+  {
+    alert("This browser does not support desktop notification");
+  }
+
+  // Let's check whether notification permissions have already been granted
+  else if (Notification.permission === "granted")
+  {
+    // If it's okay let's create a notification
+    var notification = new Notification("Buzzzzz!");
+  }
+
+  // Otherwise, we need to ask the user for permission
+  else if (Notification.permission !== "denied")
+  {
+    Notification.requestPermission().then(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        var notification = new Notification("Buzzzzz!");
+      }
+    });
+  }
+
+// At last, if the user has denied notifications, and you
+// want to be respectful there is no need to bother them any more.
+}
 
 /* MEDIA */
 

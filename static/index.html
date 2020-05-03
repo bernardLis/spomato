@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    index
+{% endblock %}
+{% block nav %}
+{# SETTINGS #}
+  <i type="button" class="fas fa-cog" data-toggle="modal" data-target="#exampleModal" id="settingsCog"></i>
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="/" method="post">
+          <div id="modalBody" class="modal-body">
+            <div class="form-group row ml-2">
+                <label class="my-auto" for="tomatoT">Tomato</label>
+                <input type="number" min="1" max="60" class="form-control ml-2" name="tomatoT" placeholder="{{ tomatoT }}">
+            </div>
+            <div class="form-group row ml-2">
+              <label class="my-auto" for="breakT">Break</label>
+              <input type="number" min="1" max="60" class="form-control ml-2" name="breakT" placeholder="{{ breakT }}">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" name="btn" class="btn btn-light" value="timerValuesChange">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block main %}
+{% for item in playlists["items"]: %}
+  <img class="playlistCover" src='{{ item["images"][0]["url"] }}' />
+  <a href='{{ item["href"] }}'>link</a>
+  <p>{{ item["name"] }}</p>
+{% endfor %}
+<div class="">
+
+        <div class="">
+            <h1>Spotify Top Track Playlist Generator</h1>
+        </div>
+        <div class="">
+            <br />
+            <form action="/go" method="post">
+
+
+                    <h3>What time range would you like to use?</h3>
+                    <br />
+                    <h4>
+
+                            <input type="radio" name="time_range" id="inlineCheckbox1" value="short_term" checked> Last Few Weeks
+                            <br />
+                            <input type="radio" name="time_range" id="inlineCheckbox2" value="medium_term"> Last Few Months
+                            <br />
+                            <input type="radio" name="time_range" id="inlineCheckbox3" value="long_term"> Last Few Years
+
+                    </h4>
+                    <br />
+                    <h3>How many tracks do you want?</h3>
+                    <h4>
+                        <input type="range" min="3" max="15" value="5" name="num_tracks" step="1" onchange="showValue(this.value)" />
+                        <span id="range">5</span>
+                    </h4>
+                        <script type="text/javascript">
+                        function showValue(newValue)
+                        {
+                            document.getElementById("range").innerHTML=newValue;
+                        }
+                        </script>
+
+                <br />
+                <div class="">
+
+                    <center>
+                        <button type="submit" class="btn btn-danger spotify_button" id="" style=""><h4><i class="fab fa-spotify"></i> Create My Playlist</h4></button>
+                    </center>
+                </div>
+
+            </form>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

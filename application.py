@@ -7,6 +7,8 @@ import requests
 import time
 import random
 
+from pathlib import Path
+
 import spotipy
 import spotipy.util as util
 
@@ -79,6 +81,21 @@ SHOW_DIALOG = True
 @app.route("/", methods=["GET", "POST"])
 def index():
     """Spotify Timer App!"""
+
+    # Get all alarms and pass them to jinjia
+    cwd = os.getcwd()
+    if (cwd == "alarms"):
+        alarms = os.listdir()
+    else:
+        os.chdir("static")
+        os.chdir("alarms")
+        alarms = os.listdir()
+
+    # Go back to home directory
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+
     # User reached route via POST
     if request.method == "POST":
         # Step 1: User Authorization.
@@ -97,13 +114,13 @@ def index():
             breakT = request.form.get("breakT")
             if (breakT == ""):
                 breakT = 5
-            return render_template("index.html", tomatoT=tomatoT, breakT=breakT, route="/")
+            return render_template("index.html", tomatoT=tomatoT, breakT=breakT, route="/", alarms=alarms)
 
     # User reached route via GET (as by loading the page)
     else:
         tomatoT = 25
         breakT = 5
-        return render_template("index.html", tomatoT=tomatoT, breakT=breakT)
+        return render_template("index.html", tomatoT=tomatoT, breakT=breakT, route="/", alarms=alarms)
 
 # authorization-code-flow Step 2.
 # Have your application request refresh and access tokens;
@@ -154,6 +171,19 @@ def after_login():
         if (len(item["images"]) == 0):
             item["images"].append({'url': 'https://placekitten.com/300/300'})
 
+    # Get all alarms and pass them to jinjia
+    cwd = os.getcwd()
+    if (cwd == "alarms"):
+        alarms = os.listdir()
+    else:
+        os.chdir("static")
+        os.chdir("alarms")
+        alarms = os.listdir()
+
+    # Go back to home directory
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
 
     # User reached route via POST
     if request.method == "POST":
@@ -164,14 +194,14 @@ def after_login():
         breakT = request.form.get("breakT")
         if (breakT == ""):
             breakT = 5
-        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, playlists=playlists, token=token, refreshToken=refreshToken, route="/afterLogin/")
+        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, alarms=alarms, playlists=playlists, token=token, refreshToken=refreshToken, route="/afterLogin/")
 
     # User reached route via GET
     else:
         # Variables for JavaScript
         tomatoT = 25
         breakT = 5
-        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, playlists=playlists, token=token, refreshToken=refreshToken, route="/afterLogin/")
+        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, alarms=alarms, playlists=playlists, token=token, refreshToken=refreshToken, route="/afterLogin/")
 
 # Refresh token for SDK
 @app.route("/refresh_Oauth", methods=['POST'])
@@ -190,23 +220,29 @@ def refresh_Oauth():
 
 # Checks to see if token is valid and gets a new token if not
 def get_token(session):
+    print("get token is called")
     token_valid = False
     token_info = session.get("token_info", {})
 
     # Checking if the session already has a token stored
     if not (session.get('token_info', False)):
+        print("in if not")
         token_valid = False
+        print("token info", token_info)
+        print("token valid", token_valid)
         return token_info, token_valid
 
     # Checking if token has expired
     now = int(time.time())
     is_token_expired = session.get('token_info').get('expires_at') - now < 60
+    print("istokenexpired", is_token_expired)
 
     # Refreshing token if it has expired
     if (is_token_expired):
         # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
         sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = client_id, client_secret = client_secret, redirect_uri = redirect_uri, scope = scope)
         token_info = sp_oauth.refresh_access_token(session.get('token_info').get('refresh_token'))
+        print("token info", token_info)
 
     token_valid = True
     return token_info, token_valid
