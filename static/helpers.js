@@ -11,7 +11,7 @@ function refreshOauthToken() {
 	contentType: 'application/json;charset=UTF-8',
 	success: function (data)
   {
-    token = data[0]
+    token = data["token"]
 	}
 	});
   return token;
