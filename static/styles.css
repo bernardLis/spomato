@@ -138,14 +138,14 @@ body
 }
 #settingsCog:hover, #brandIcon:hover, #alarmCollapser:hover
 {
-  filter: brightness(115%);
-  transform: scale(1.05);
+  filter: brightness(125%);
+  transform: scale(1.1);
   transition: all .2s ease-in-out;
   cursor: pointer;
 }
 #settingsCog:active, #brandIcon:active, #alarmCollapser:active
 {
-  filter: brightness(90%);
+  filter: brightness(80%);
   transform: scale(0.95);
   transition: all .2s ease-in-out;
   cursor: pointer;
@@ -308,12 +308,12 @@ body
 .togglePlayPlaylist:hover
 {
   border: 1px solid white;
-  transform: scale(1.05);
+  transform: scale(1.1);
   transition: all .2s ease-in-out;
 }
 .togglePlayPlaylist:active
 {
-  transform: scale(1);
+  transform: scale(0.95);
   transition: all .2s ease-in-out;
   color: #adadad;
   border: 1px solid #666966;
@@ -378,7 +378,7 @@ body
 }
 #togglePlayButton:active
 {
-  transform: scale(1);
+  transform: scale(0.95);
   transition: all .2s ease-in-out;
   color: #adadad;
   border: 1px solid #666966;
@@ -397,12 +397,12 @@ body
 #previousTrack:hover, #nextTrack:hover
 {
   color: white;
-  transform: scale(1.05);
+  transform: scale(1.1);
   transition: all .4s ease-in-out;
 }
 #previousTrack:active, #nextTrack:active
 {
-  transform: scale(1);
+  transform: scale(0.95);
   transition: all .2s ease-in-out;
   color: #c2c2c2;
 }
@@ -414,15 +414,15 @@ body
 }
 #toggleShuffle:hover, #toggleRepeat:hover, #muteButton:hover
 {
-  filter: brightness(115%);
-  transform: scale(1.05);
+  filter: brightness(125%);
+  transform: scale(1.1);
   transition: all .4s ease-in-out;
 }
 #toggleShuffle:active, #toggleRepeat:active, #muteButton:active
 {
-  transform: scale(1);
+  transform: scale(0.95);
   transition: all .2s ease-in-out;
-  filter: brightness(90%);
+  filter: brightness(80%);
 }
 
 /* Track position control */
@@ -465,6 +465,7 @@ body
 /* Mouse-over effects */
 .slider:hover {
   opacity: 1; /* Fully shown on mouse-over */
+  filter: brightness(1.1);
 }
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */

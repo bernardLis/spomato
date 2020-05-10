@@ -1,11 +1,16 @@
-import os
+import sys
+import json
 
-from cs50 import SQL
-from datetime import date, datetime, timedelta
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
-from flask_session import Session
-from tempfile import mkdtemp
-from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
-from werkzeug.security import check_password_hash, generate_password_hash
+import time
 
-from helpers import apology, login_required
+import random
+
+
+
+scope = 'streaming, user-library-read, playlist-read-collaborative, user-modify-playback-state, user-read-playback-position, user-read-currently-playing'
+client_id='b7c4807138a84147bd1147b9bf602048'
+client_secret='699795974a5d467e900b64b3018d09d4'
+redirect_uri='https://google.com/'
+
+now = random.randint(0, 5000000000)
+print(now)

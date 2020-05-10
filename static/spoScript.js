@@ -457,6 +457,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     });
   })
 
+
   // This executes on range change
   var volumeListener = function()
   {
@@ -540,6 +541,31 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   onRangeChange(trackRange, seekTrackListener);
 
   /* Keyboard shortcuts */
+
+  // changing volume on mouse wheel scroll volumeRange.addEventListener('wheel', function(e)
+  // https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event
+  volumeRange.addEventListener('wheel', function(e)
+  {
+    // Prevent scrolling the page
+    e.preventDefault();
+
+    // Getting range value and setting it to the player
+    var volumeValue = volumeRange.value;
+
+    // Getting delta change on mouse wheel scroll
+    var y = e.deltaY;
+
+    // Parsing the change
+    var newValue = -parseInt(y/10) + parseInt(volumeValue);
+    var number = Math.min(Math.max(parseInt(newValue), 0), 100);
+
+    // Updating the range value and the volume
+    volumeRange.value = number.toString();
+    player.setVolume(number/100);
+
+    // Updating the range fill
+    volumeRange.style.background = 'linear-gradient(to right, #787878 0%, #787878 ' + volumeRange.value + '%, #141414 ' + volumeRange.value + '%, #141414 100%)';
+  })
 
   document.addEventListener('keydown', event =>
   {

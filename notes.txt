@@ -1,5 +1,5 @@
 pip install --target=C:\Python38-32\Lib\site-packages requests requests_oauthlib
-
+pip install --target=C:\Python38-32\Lib\site-packages Flask-Caching
 
 pip3 install -r requirements.txt
 
