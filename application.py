@@ -20,6 +20,7 @@ from flask_cors import CORS, cross_origin
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 from helpers import apology
 
@@ -61,6 +62,7 @@ scope = "streaming, user-library-read, playlist-read-private, playlist-read-coll
 # When I set it to false in dev env it breaks the authentication
 SHOW_DIALOG = True
 
+
 @app.route("/", methods=["GET", "POST"])
 @cross_origin(supports_credentials=True)
 def index():
@@ -95,16 +97,23 @@ def index():
             tomatoT = request.form.get("tomatoT")
             if (tomatoT == ""):
                 tomatoT = 25
+            session["tomatoT"] = tomatoT
+
             breakT = request.form.get("breakT")
             if (breakT == ""):
                 breakT = 5
-            return render_template("index.html", tomatoT=tomatoT, breakT=breakT, route="/", alarms=alarms)
+            session["breakT"] = breakT
+
+            return render_template("index.html", tomatoT=session["tomatoT"], breakT=session["breakT"], route="/", alarms=alarms)
 
     # User reached route via GET (as by loading the page)
     else:
-        tomatoT = 25
-        breakT = 5
-        return render_template("index.html", tomatoT=tomatoT, breakT=breakT, route="/", alarms=alarms)
+        if session.get("tomatoT") is None:
+            session["tomatoT"] = 25
+        if session.get("breakT") is None:
+            session["breakT"] = 5
+
+        return render_template("index.html", tomatoT=session["tomatoT"], breakT=session["breakT"], route="/", alarms=alarms)
 
 # authorization-code-flow Step 2.
 # Have your application request refresh and access tokens;
@@ -118,6 +127,7 @@ def callback():
     # Session id
     s = session.sid
     print("session.sid: ", s)
+    print("in callback session.get:", session.get("tomatoT"))
 
     # I've added a username because it was throwing an error without it, I bet that it is a wrong solution.
     # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
@@ -129,6 +139,9 @@ def callback():
     # Saving the access token along with all other token related info
     session["token_info"] = token_info
 
+    session["tomatoT"] = session.get("tomatoT")
+    session["breakT"] = session.get("breakT")
+
     return redirect("/afterLogin/")
 
 # authorization-code-flow Step 3.
@@ -137,6 +150,9 @@ def callback():
 @app.route("/afterLogin/", methods=["GET", "POST"])
 @cross_origin(supports_credentials=True)
 def after_login():
+    print("in afterlogin session.get:", session.get("tomatoT"))
+
+
     # Get user's Spotify Auth tokens
     session['token_info'], authorized = get_token(session)
     session.modified = True
@@ -148,9 +164,36 @@ def after_login():
     token = session['token_info']['access_token']
     refreshToken = session['token_info']['refresh_token']
 
-    # Get users Spotify playlists
+    # Get user's Spotify playlists
     playlistsJSON = json.dumps(sp.current_user_playlists(), indent=4)
     playlists = json.loads(playlistsJSON)
+
+    # [new] Get user's current playback
+    current_playbackJSON = json.dumps(sp.current_playback(), indent=4)
+    current_playback = json.loads(current_playbackJSON)
+
+    if not current_playbackJSON == "null":
+        current_playbackDict = {
+            "volume": current_playback["device"]["volume_percent"],
+            "shuffle": current_playback["shuffle_state"],
+            "repeat": current_playback["repeat_state"],
+            "context_uri": current_playback["context"]["uri"],
+            "cover_img": current_playback["item"]["album"]["images"][0]["url"],
+            "artist": current_playback["item"]["album"]["artists"][0]["name"],
+            "track_name": current_playback["item"]["name"],
+            "track_uri": current_playback["item"]["uri"]
+        }
+    else:
+        current_playbackDict = {
+            "volume": 50,
+            "shuffle": "false",
+            "repeat": "off",
+            "context_uri": "spotify:playlist:2E2eI5zIlsulHgaN1n3bkQ",
+            "cover_img": "https://placekitten.com/300/300",
+            "artist": "a cat",
+            "track_name": "miau miau miau",
+            "track_uri": "spotify:track:3BjygBarJk0ZDwEooe1ccf"
+        }
 
     # Append kitten placeholders to empty playlists
     for item in playlists["items"]:
@@ -177,17 +220,25 @@ def after_login():
         tomatoT = request.form.get("tomatoT")
         if (tomatoT == ""):
             tomatoT = 25
+        session["tomatoT"] = tomatoT
+
         breakT = request.form.get("breakT")
         if (breakT == ""):
             breakT = 5
-        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, alarms=alarms, playlists=playlists, token=token, refreshToken=refreshToken, route="/afterLogin/")
+        session["breakT"] = breakT
+
+        return render_template("afterLogin.html", tomatoT=session["tomatoT"], breakT=session["breakT"], alarms=alarms, playlists=playlists, route="/afterLogin/", current_playback=current_playbackDict)
 
     # User reached route via GET
     else:
+        print("im in get");
         # Variables for JavaScript
-        tomatoT = 25
-        breakT = 5
-        return render_template("afterLogin.html", tomatoT=tomatoT, breakT=breakT, alarms=alarms, playlists=playlists, token=token, refreshToken=refreshToken, route="/afterLogin/")
+        if session.get("tomatoT") is None:
+            session["tomatoT"] = 25
+        if session.get("breakT") is None:
+            session["breakT"] = 5
+
+        return render_template("afterLogin.html", tomatoT=session["tomatoT"], breakT=session["breakT"], alarms=alarms, playlists=playlists, route="/afterLogin/", current_playback=current_playbackDict)
 
 # Refresh token for SDK
 @app.route("/refresh_Oauth", methods=['POST'])
@@ -205,23 +256,18 @@ def refresh_Oauth():
 
 # Checks to see if token is valid and gets a new token if not
 def get_token(session):
-    print("get token is called")
     token_valid = False
     token_info = session.get("token_info")
 
     # Checking if the session already has a token stored
     # I don't get this
     if not (session.get('token_info', False)):
-        print("in if not")
         token_valid = False
-        print("token info", token_info)
-        print("token valid", token_valid)
         return token_info, token_valid
 
     # Checking if token has expired
     now = int(time.time())
     is_token_expired = session.get('token_info').get('expires_at') - now < 60
-    print("istokenexpired", is_token_expired)
 
     # Refreshing token if it has expired
     if (is_token_expired):
@@ -229,16 +275,54 @@ def get_token(session):
         # https://pythonhosted.org/Flask-Session/
         # Session id
         s = session.sid
-        print("session.sid: ", s)
 
-        print("attempting to refresh token in get_token")
         # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
         sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = client_id, username = s, client_secret = client_secret, redirect_uri = redirect_uri, scope = scope)
         token_info = sp_oauth.refresh_access_token(session.get('token_info').get('refresh_token'))
-        print("token info", token_info)
 
     token_valid = True
     return token_info, token_valid
+
+# Handling alarm uploads
+# https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
+UPLOAD_FOLDER = 'static/alarms'
+ALLOWED_EXTENSIONS = {'wav', 'mp3'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route("/alarmUpload", methods=["GET", "POST"])
+@cross_origin()
+def ProcessAlarm():
+    print("im in process alarm")
+    if request.method == "POST":
+        print("post")
+
+        # Checking if the post has the file
+        if 'file' not in request.files:
+            print('No file part')
+            return redirect("/")
+
+        file = request.files['file']
+        print("file", file)
+
+        # if user does not select file, browser also
+        if file.filename == '':
+            print('No selected file')
+            return jsonify("No file selected")
+
+        # if file has invalid extension return
+        if not allowed_file(file.filename):
+            print("not allowed file")
+            return jsonify("Not allowed file")
+
+        if file and allowed_file(file.filename):
+            print("im in if file and allowed_file(file.filename)")
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return jsonify("Great file, I am taking it.")
 
 def errorhandler(e):
     """Handle error"""

@@ -1,13 +1,16 @@
 // Variables I want to be global are here (device_id, duration)
 var globalVars = {};
 
+// Need to define token before refresh oauth is called
+var token;
+
 // Spotify SDK
 window.onSpotifyWebPlaybackSDKReady = () =>
 {
   const player = new Spotify.Player
   ({
     name: 'Spomato Player',
-    volume: 0.5,
+    volume: cVolume/100,
     // Get OAuth token:
     getOAuthToken: cb =>
     {
@@ -16,9 +19,25 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       cb(token);
     }
   });
+
   // Error handling
   player.addListener('initialization_error', ({ message }) => { console.error("initialization error", message); });
-  player.addListener('authentication_error', ({ message }) => { console.error("failed to authenticate!!", message); });
+  player.addListener('authentication_error', ({ message }) => { console.error("failed to authenticate!! EXPERIMENT with creating a new player on that error:", message);
+    // Experiment
+    const player = new Spotify.Player
+    ({
+      name: 'Spomato Player',
+      volume: cVolume/100,
+      // Get OAuth token:
+      getOAuthToken: cb =>
+      {
+        // This function is supposed to return a token and refresh it if needed.
+        refreshOauthToken();
+        cb(token);
+      }
+    });
+
+ });
   player.addListener('account_error', ({ message }) => { console.error("account error", message); });
   player.addListener('playback_error', ({ message }) => { console.error("playback error", message); });
 
@@ -26,6 +45,9 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   player.addListener('ready', ({ device_id }) => {
     // Pushing device_id to playerVar object
     globalVars.id = device_id;
+
+    // Transfering playback from other spotify player to Spomato player
+    transferPlayback();
   });
 
   // Not Ready

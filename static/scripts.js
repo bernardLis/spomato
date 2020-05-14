@@ -250,8 +250,6 @@ var resumePauseTimerToggler = function()
 /* MEDIA */
 
 var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-
-
 // For devices with screen width of less than 600
 if (width < 600)
 {

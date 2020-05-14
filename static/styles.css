@@ -101,10 +101,58 @@ body
   background-color: #171717;
 }
 
+/* Changing bootstrap modal styles*/
+
+#changeTimerForm
+{
+  border-bottom: 1px solid #c2c2c2;
+}
 .modal-content
 {
   color: #e0e0e0;
   background-color: #171717;
+}
+.modal-header
+{
+  border-bottom: none;
+}
+.modal-footer
+{
+  border-top: none;
+}
+.modalLabel
+{
+  width: 50px;
+}
+
+
+
+
+
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: none;
+}
+.btn-outline-danger:not(:disabled):not(.disabled).active:focus, .btn-outline-danger:not(:disabled):not(.disabled):active:focus, .show>.btn-outline-danger.dropdown-toggle:focus {
+  outline: none !important;
+  box-shadow: none;
+}
+.btn-outline-danger
+{
+  transition: all .2s ease-in-out;
+}
+
+.btn-outline-danger:hover
+{
+  transition: all .2s ease-in-out;
+  transform: scale(1.05);
+  background: radial-gradient(circle, rgba(219,0,0,1) 0%, rgba(196,0,40,1) 100%);
+}
+.btn-outline-danger:active
+{
+  transition: all .2s ease-in-out;
+  transform: scale(0.95);
+  filter: brightness(0.9);
 }
 
 
@@ -211,6 +259,7 @@ body
   color: #e0e0e0;
   font-weight: bold;
   background-color: #171717;
+  cursor: pointer;
 }
 .inputfile
 {
@@ -246,9 +295,11 @@ body
 {
   padding-top: 5%;
 }
-
+/**/
 .playlistName
 {
+  overflow: hidden;
+  white-space: nowrap;
   color: #e0e0e0;
   font-weight: bold;
 }
@@ -265,9 +316,10 @@ body
 
 .playlistElement
 {
-  width: 200px;
   position: relative;
   padding: 0;
+  margin: 0.5rem;
+  width: 250px;
 }
 .playlistElement:hover > .playlistCover
 {
@@ -276,8 +328,12 @@ body
 
 .playlistCover
 {
+  object-fit: cover;
+  height: 250px;
+/*
   width: 100%;
   height: 100%;
+*/
   margin: 0;
 }
 
@@ -293,12 +349,14 @@ body
   width: 0;
   height: 0;
   position: relative;
-  margin-top: -22px;
+  margin-top: -35px;
   margin-left: -22px;
 }
 
 .togglePlayPlaylist
 {
+  font-size: 1.3rem;
+
   padding: 15px;
   color: white;
   border: 1px solid #878684;

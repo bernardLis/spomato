@@ -1,3 +1,86 @@
+
+/* ALARM UPLOAD HANDLING */
+
+// File validation
+// https://www.geeksforgeeks.org/file-type-validation-while-uploading-it-using-javascript/
+// https://www.geeksforgeeks.org/validation-of-file-size-while-uploading-using-javascript-jquery/
+var alarmFileInput = document.getElementById("alarmFileInput");
+var fileValidationText = document.getElementById("fileValidationText");
+var fileValidationType = document.getElementById("fileValidationType");
+var fileValidationSize = document.getElementById("fileValidationSize");
+
+alarmFileInput.addEventListener("change", function()
+{
+  // Reset the "alert" colors
+  fileValidationType.style.color = "#e0e0e0";
+  fileValidationSize.style.color = "#e0e0e0";
+
+  var filePath = alarmFileInput.value;
+
+  // Allowing file type
+  var allowedExtensions = /(\.wav|\.mp3)$/i;
+
+  // If user tries to upload invalid file type, color file type span red
+  if (!allowedExtensions.exec(filePath))
+  {
+    fileValidationType.style.color = "#db0000";
+    alarmFileInput.value = '';
+  }
+  else
+  {
+    fileValidationType.style.color = "#1DB954";
+  }
+
+  // Allowing size
+  if (alarmFileInput.files.length > 0)
+  {
+    for (var i = 0; i <= alarmFileInput.files.length - 1; i++)
+    {
+      var fsize = alarmFileInput.files.item(i).size;
+      var file = Math.round((fsize / 1024));
+
+      // The size of the file.
+      if (file >= 500)
+      {
+        fileValidationSize.style.color = "#db0000";
+        alarmFileInput.value = '';
+      }
+      else
+      {
+        fileValidationSize.style.color = "#1DB954";
+      }
+    }
+  }
+})
+
+// Sending the file to flask
+$(function()
+{
+    $('#alarmUpload').click(function(e)
+    {
+      e.preventDefault();
+      var form_data = new FormData($('#uploadAlarmForm')[0]);
+      console.log("formdata", form_data);
+      $.ajax({
+            type: 'POST',
+            url: '/alarmUpload',
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function(xhr, data)
+            {
+              console.log("im sending to myself: ", data);
+            },
+            success: function(data) {
+                console.log('Success!', data);
+                location.reload();
+            },
+        });
+    });
+});
+
+
 /* Calls to flask */
 
 // Refreshing tokens through flask
@@ -61,7 +144,7 @@ String.prototype.toHHMMSS = function ()
 
 /* Spotify Requests */
 
-// Play a specified track on the Web Playback SDK's device ID
+// Play a playlist from URI on the Web Playback SDK's device ID
 // https://glitch.com/edit/#!/spotify-web-playback?path=script.js:67:0
 function play(uri)
 {
@@ -82,6 +165,30 @@ function play(uri)
     }
   });
 }
+
+// Transfer user's playback to Spomato
+function transferPlayback()
+{
+  // Official info: https://developer.spotify.com/console/put-user-player/
+  // Preping data object for Spotify
+  // to start playing right away   var uriData = "{" + '"' + "device_ids" + '"' + ": [" + '"' + globalVars.id + '"' + "]," + '"play": "true"' + "}";
+
+  var dataX = "{" + '"' + "device_ids" + '"' + ": [" + '"' + globalVars.id + '"' + "]" + "}";
+
+  $.ajax({
+    url: "https://api.spotify.com/v1/me/player",
+    type: "PUT",
+    data: dataX,
+    beforeSend: function(xhr, data)
+    {
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token );
+    },
+    success: function(data)
+    {
+    }
+  });
+}
+
 
 function toggleShuffle(state)
 {

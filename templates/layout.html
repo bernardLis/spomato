@@ -67,29 +67,44 @@
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Settings:</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
-                      <form action="{{ route }}" method="post">
-                        <div id="modalBody" class="modal-body">
-                          <div class="form-group row ml-2">
-                              <label class="my-auto" for="tomatoT">Tomato</label>
-                              <input type="number" min="1" max="60" class="form-control ml-2" name="tomatoT" placeholder="{{ tomatoT }}">
+                      <form id="changeTimerForm" action="{{ route }}" method="post">
+                        <div id="modalBody" class="modal-body row">
+                          <div class="col-md">
+                            <div class="form-group row ml-1">
+                                <label class="modalLabel my-auto mr-1" for="tomatoT">Tomato</label>
+                                <input type="number" min="1" max="60" class="form-control ml-2" name="tomatoT" placeholder="{{ tomatoT }}">
+                            </div>
+                            <div class="form-group row ml-1">
+                              <label class="text-left modalLabel my-auto mr-1" for="breakT">Break</label>
+                              <input type="number" min="1" max="60" class="form-control ml-2" name="breakT" placeholder="{{ breakT }}">
+                            </div>
                           </div>
-                          <div class="form-group row ml-2">
-                            <label class="my-auto" for="breakT">Break</label>
-                            <input type="number" min="1" max="60" class="form-control ml-2" name="breakT" placeholder="{{ breakT }}">
+                          <div class="col-md justify-content-center">
+                            <button type="submit" name="btn" class="btn btn-light" value="timerValuesChange">Save changes</button>
                           </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="submit" name="btn" class="btn btn-light" value="timerValuesChange">Save changes</button>
                         </div>
                       </form>
+                      <h5 class="text-left ml-3 my-3">Upload new alarm:</h5>
+                      <form class="ml-3 my-2 row" id="uploadAlarmForm" method="post" enctype="multipart/form-data">
+                        <fieldset>
+                          <input type="file" name="file" class="form-control-file" id="alarmFileInput" />
+                        </fieldset>
+
+                        <fieldset>
+                          <button type="submit" class="btn btn-light" name="btn" id="alarmUpload" value="alarmUpload">Upload</button>
+                        </fieldset>
+                      </form>
+                      <p id="fileValidationText" class="text-left ml-3">Only <span id="fileValidationType">.wav and .mp3</span> files <span id="fileValidationSize">less than 500KB.</span></p>
                     </div>
                   </div>
+
                 </div>
+
               </div>
             </div>
 
