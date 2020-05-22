@@ -22,22 +22,13 @@ window.onSpotifyWebPlaybackSDKReady = () =>
 
   // Error handling
   player.addListener('initialization_error', ({ message }) => { console.error("initialization error", message); });
-  player.addListener('authentication_error', ({ message }) => { console.error("failed to authenticate!! EXPERIMENT with creating a new player on that error:", message);
-    // Experiment
-    const player = new Spotify.Player
-    ({
-      name: 'Spomato Player',
-      volume: cVolume/100,
-      // Get OAuth token:
-      getOAuthToken: cb =>
-      {
-        // This function is supposed to return a token and refresh it if needed.
-        refreshOauthToken();
-        cb(token);
-      }
-    });
-
- });
+  player.addListener('authentication_error', ({ message }) =>
+  {
+    console.error("failed to authenticate", message);
+    // On authentication error, alert user and send them back to /
+    alert("Failed to authenticate, please try logging in again.")
+    window.location.href = "http://127.0.0.1:5000/";
+  });
   player.addListener('account_error', ({ message }) => { console.error("account error", message); });
   player.addListener('playback_error', ({ message }) => { console.error("playback error", message); });
 
@@ -63,7 +54,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
    * Play / Pause / Resume functionalities
   */
 
-  // Play button is only visible when mouse is hovering on the playlist element
+  // Play button is only visible when the mouse is hovering on the playlist element
   var playlistElements = document.getElementsByClassName("playlistElement");
   var playlistElementsL = playlistElements.length;
 
@@ -72,7 +63,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     // Show play button on mouse enter
     playlistElements[i].addEventListener("mouseenter", function(e)
     {
-      // Find play button and show it
+      // Find the play button and show it
       var c = playlistElements[i].children;
       var cc = c[1].children;
       var ccc = cc[0].children;
@@ -86,10 +77,10 @@ window.onSpotifyWebPlaybackSDKReady = () =>
         }
       }
     })
-    // Hide play button on mouse leave
+    // Hide the play button on mouse leave
     playlistElements[i].addEventListener("mouseleave", function(e)
     {
-      // Find play button and hide it
+      // Find the play button and hide it
       var c = playlistElements[i].children;
       var cc = c[1].children;
       var ccc = cc[0].children;
@@ -109,7 +100,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   var togglePlayPlaylist = document.getElementsByClassName("togglePlayPlaylist");
   var togglePlayPlaylistL = togglePlayPlaylist.length
 
-  //const list = ['first', 'second', 'third']; element.classList.add(...list);
+  // const list = ['first', 'second', 'third']; element.classList.add(...list);
   const pauseClasses = ["pauseButton", "fa", "fa-pause", "visible", "fa-volume-up", "playing"];
   const resumeClasses = ["resumeButton", "fa", "fa-play", "visible", "playing"];
   const playClasses = ["playButton", "fa-play", "hidden"];
@@ -122,16 +113,16 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       // Iterating on classes
       for (var j = 0; j < togglePlayPlaylist[i].classList.length; j++)
       {
-        // Pasue functionality
+        // Pause functionality
         if (togglePlayPlaylist[i].classList[j] == "pauseButton")
         {
-          // Pausing player
+          // Pausing the player
           player.pause();
 
-          // Removing pause classes
+          // Removing the pause classes
           togglePlayPlaylist[i].classList.remove(...pauseClasses);
 
-          // Adding resume classes
+          // Adding the resume classes
           togglePlayPlaylist[i].classList.add(...resumeClasses);
           return;
         }
@@ -139,7 +130,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
         // Resume functionality
         else if (togglePlayPlaylist[i].classList[j] == "resumeButton")
         {
-          // Resuming player
+          // Resuming the player
           player.resume();
 
           // Removing resume classes
@@ -226,12 +217,12 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   {
     // Pushing duration to the global array
     globalVars.duration = current_track["duration_ms"];
+    // Pushing track name to the global array
+    globalVars.trackName = current_track['name'];
 
     // Displaying the track duration
     var trackDuration = document.getElementById("trackDuration");
-
     var duration = (current_track["duration_ms"]/1000).toString().toHHMMSS();
-
     trackDuration.innerHTML = duration;
 
     // Displaying track info in the player
@@ -239,12 +230,11 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     document.getElementById("cpName").innerHTML = current_track['name'];
     document.getElementById("cpArtist").innerHTML = current_track['artists'][0]['name'];
 
-    // Same for mobile
+    // Same for the mobile player
     document.getElementById("cpCoverMobile").src = current_track['album']['images'][0]['url'];
     document.getElementById("cpNameMobile").innerHTML = current_track['name'];
     document.getElementById("cpArtistMobile").innerHTML = current_track['artists'][0]['name'];
   });
-
 
   // Scrolling long text on track and artist name
   // https://jsfiddle.net/MadLittleMods/nsMWX/
@@ -272,7 +262,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   var togglePlayButton = document.getElementById("togglePlayButton");
   togglePlayButton.addEventListener("click", togglePlayFunction);
 
-
   /* Next and previous track functionalities */
   var previousTrackButton = document.getElementById("previousTrack");
   var nextTrackButton = document.getElementById("nextTrack");
@@ -285,7 +274,8 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   previousTrackMobileButton.addEventListener("click", function() { player.previousTrack(); })
   nextTrackMobileButton.addEventListener("click", function() { player.nextTrack(); })
 
-  /* Shuffle, repeat
+  /*
+   * Shuffle, repeat
    * Resume/pause button switching
   */
 
@@ -317,7 +307,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
         }
       }
     }
-    // Same as above but for mobile
+    // Same as above for mobile
     // Check if state is paused and button has incorrect class - change it
     if (state["paused"] == true)
     {
@@ -505,7 +495,8 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   onRangeChange(volumeRange, volumeListener);
 
 
-  /* Progress bar
+  /*
+   * Progress bar
    * TODO: I need to find a way NOT to run this function every 1second when there is nothing happening.
   */
 
@@ -540,13 +531,11 @@ window.onSpotifyWebPlaybackSDKReady = () =>
 
       // Fill the backgroud of the slider
       trackRange.style.background = 'linear-gradient(to right, #787878 0%, #787878 ' + trackRange.value + '%, #141414 ' + trackRange.value + '%, #141414 100%)'
-
     });
   }, 1000);
 
   // Seek track position on track range change
   var trackRange = document.getElementById("trackRange");
-
   var seekTrackListener = function()
   {
     // Getting the range value (% value of duration)
@@ -564,11 +553,11 @@ window.onSpotifyWebPlaybackSDKReady = () =>
 
   /* Keyboard shortcuts */
 
-  // changing volume on mouse wheel scroll volumeRange.addEventListener('wheel', function(e)
+  // changing volume on mouse wheel scroll
   // https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event
   volumeRange.addEventListener('wheel', function(e)
   {
-    // Prevent scrolling the page
+    // Prevents page scrolling
     e.preventDefault();
 
     // Getting range value and setting it to the player
@@ -600,57 +589,21 @@ window.onSpotifyWebPlaybackSDKReady = () =>
 
   document.addEventListener('keyup', event =>
   {
+    // start a new tomato on enter click
+    if( event.keyCode === 13)
+    {
+      tomatoTimer();
+    }
+    // start a new break timer on shift enter click
+    if (event.keyCode == 13 && event.shiftKey)
+    {
+      breakTimer();
+    }
+    // Toggle playback on space
     if (event.code === 'Space')
     {
       // Toggle playback
       player.togglePlay();
-
-      // Toggle button appearances
-      for (var i = 0; i < togglePlayButton.classList.length; i++)
-      {
-        // If user clicks on play swap it to pause
-        if (togglePlayButton.classList[i] == "fa-play")
-        {
-          // Find which playlist is played and swap buttons
-          for (let j = 0; j < togglePlayPlaylistL; j++)
-          {
-            // Iterating on classes
-            for (var k = 0; k < togglePlayPlaylist[j].classList.length; k++)
-            {
-              if (togglePlayPlaylist[j].classList[k] == "playing")
-              {
-                // Removing resume classes
-                togglePlayPlaylist[j].classList.remove(...resumeClasses);
-
-                // Adding pause classes
-                togglePlayPlaylist[j].classList.add(...pauseClasses);
-              }
-            }
-          }
-          return;
-        }
-        // If user clicks on pause swap it to play
-        if (togglePlayButton.classList[i] == "fa-pause")
-        {
-          // Find which playlist is played and swap buttons
-          for (let j = 0; j < togglePlayPlaylistL; j++)
-          {
-            // Iterating on classes
-            for (var k = 0; k < togglePlayPlaylist[j].classList.length; k++)
-            {
-              if (togglePlayPlaylist[j].classList[k] == "playing")
-              {
-                // Removing resume classes
-                togglePlayPlaylist[j].classList.remove(...pauseClasses);
-
-                // Adding pause classes
-                togglePlayPlaylist[j].classList.add(...resumeClasses);
-              }
-            }
-          }
-          return;
-        }
-      }
     }
     if (event.code === "ArrowLeft")
     {
@@ -662,7 +615,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     }
   })
 
-
   /**
    * TIMER LOGIC
    * TODO: after double clicking multiple times on timer it "breaks"
@@ -672,17 +624,15 @@ window.onSpotifyWebPlaybackSDKReady = () =>
   // Setting functions to the elements
   document.getElementById("tomatoTimer").addEventListener("click", tomatoTimer);
   document.getElementById("breakTimer").addEventListener("click", breakTimer);
-
   var timerDisplay = document.getElementById("timer");
-
   document.getElementById("pauseResumeTimer").addEventListener("click", pauseResumeTimer);
 
   // Set the date we're counting down to
-  var timerValue = 1 * 1000;
+  var timerValue = 0;
   var n = 0;
   var isTimerOver = false;
 
-  // Update the count down every 1 second
+  // Update the count down every second
   var timer = new Timer(function()
   {
     // On every interval update the iterating variable
@@ -691,18 +641,32 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     // Find the distance between now and the count down date
     var distance = timerValue - n;
 
-    // Time calculations for days, hours, minutes and seconds
+    // Never let the distance be less than 0
+    if (distance < 0)
+    {
+      distance = 0
+    }
+
+    // Time calculations for minutes and seconds
     // toLocaleString to display 01
     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
     var seconds = Math.floor((distance % (1000 * 60)) / 1000).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 
-    // Display the timer in the element with id="timer"
+    // Display the timer in the element with id="timerDisplay"
     timerDisplay.innerHTML = minutes + ":" + seconds;
 
     // Display the timer in the page title
-    document.title = minutes + ":" + seconds;
+    if (globalVars.trackName == undefined)
+    {
+      document.title = minutes + ":" + seconds
+    }
+    // Display the track name too
+    else
+    {
+      document.title = minutes + ":" + seconds + " - " + globalVars.trackName;
+    }
 
-    // When the countdown is finished pause timer
+    // When the countdown is finished pause the timer
     if (distance <= 0)
     {
       // Display buzzzzz in page title
@@ -726,7 +690,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       // Play an alarm
       if (alarmPlayAlarm.checked)
       {
-        // Play the selected alarm and selected volume
+        // Play the selected alarm at the selected volume
         playAlarm();
       }
       if (alarmNotification.checked)
@@ -736,6 +700,9 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     }
   }, 1000);
 
+  // This prevents running the timer on document load
+  timer.stop()
+
   // Timer is editable after double click and runs from edited value // "p",
   // FROM: https://codereview.stackexchange.com/questions/32520/double-click-to-edit-and-add-new-value-to-li
   var oriVal;
@@ -744,7 +711,7 @@ window.onSpotifyWebPlaybackSDKReady = () =>
     // Stops the timer
     timer.stop();
 
-    // Get original value of the timer convert it to seconds
+    // Get the original value of the timer convert it to seconds
     oriVal = $(this).text();
     var oriList = oriVal.split(":");
     oriSeconds = (parseInt(oriList[0]) * 60) + parseInt(oriList[1]);
@@ -765,7 +732,6 @@ window.onSpotifyWebPlaybackSDKReady = () =>
 
   // On focus out start playing inputed timer
   // > jquerry for children of, p > input this does not make sense tho...I will ignore it for now
-
   $("#timerDad").on("focusout", "p > input", function (e)
   {
     // Variable I will use later
@@ -806,25 +772,24 @@ window.onSpotifyWebPlaybackSDKReady = () =>
       seconds = newSeconds;
     }
 
-    // When timer set at 0, need to set it to 1 sec to counteract going to negative value
+    // Return if timer is set to 0
     if (seconds == 0)
     {
-      timerValue = 1 * 1000;
+      return
     }
+    // Else start a new timer
     else
     {
       timerValue = seconds * 1000;
-    }
 
-    // Resetting the timer
-    n = 0;
-    timer.reset();
+      // Resetting the timer
+      n = 0;
+      timer.reset();
+    }
 
     // Remove this element
     $this.remove();
   });
-
-
 
   // Pasue - Resume button functionality
   function pauseResumeTimer(e)
@@ -1050,12 +1015,22 @@ alarmVolumeSelection.addEventListener("focusout", function()
   playAlarm();
 })
 
+// Keeping track of alarm being played
+var alarm = null;
 // Play the alarm - https://howlerjs.com/
 function playAlarm()
 {
+  // Only one alarm can be played at the time
+  if (alarm != null) {
+    alarm.stop();
+    alarm.unload();
+    alarm = null;
+  }
+
   // What to play
   var selected = document.getElementById("alarmSelection");
-  var url = selected.options[selected.selectedIndex].value;
+  // I had to add "/" coz it was not working on after login page otherwise
+  var url = "/" + selected.options[selected.selectedIndex].value;
 
   // At what volume to play it
   var volume = document.getElementById("alarmVolumeInput").value;
@@ -1069,7 +1044,7 @@ function playAlarm()
   }
 
   // Actual alarm
-  var alarm = new Howl
+  alarm = new Howl
   ({
     src: [url],
     volume: volume,
@@ -1110,13 +1085,11 @@ function notify()
 }
 
 /* MEDIA */
-
 var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 
 // For devices with screen width of less than 600
 if (width < 600)
 {
-
   // Change the design of timer buttons
   var tomatoTimer = document.getElementById("tomatoTimer");
   var breakTimer = document.getElementById("breakTimer");

@@ -1,6 +1,5 @@
 /**
  * TIMER LOGIC
- * TODO: add a button for a new timer
  * TODO: after double clicking multiple times on timer it "breaks"
  * TODO: add hours to the timer?
  */
@@ -10,29 +9,34 @@ document.getElementById("tomatoTimer").addEventListener("click", tomatoTimer);
 document.getElementById("breakTimer").addEventListener("click", breakTimer);
 
 var timerDisplay = document.getElementById("timer");
-
 document.getElementById("pauseResumeTimer").addEventListener("click", pauseResumeTimer);
 
-// Set the date we're counting down to
-var timerValue = 1 * 1000;
+// Timer variables
+var timerValue = 0;
 var n = 0;
 var isTimerOver = false;
 
-// Update the count down every 1 second
+// Update the count down every second
 var timer = new Timer(function()
 {
-  // On every interval update the iterating variable
+  // Every second update the iterating variable
   n += 1 * 1000;
 
   // Find the distance between now and the count down date
   var distance = timerValue - n;
 
-  // Time calculations for days, hours, minutes and seconds
+  // Never let distance be less than 0
+  if (distance < 0)
+  {
+    distance = 0
+  }
+
+  // Time calculations for minutes and seconds
   // toLocaleString to display 01
   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
   var seconds = Math.floor((distance % (1000 * 60)) / 1000).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 
-  // Display the timer in the element with id="timer"
+  // Display the timer in the element with id="timerDisplay"
   timerDisplay.innerHTML = minutes + ":" + seconds;
 
   // Display the timer in the page title
@@ -41,7 +45,7 @@ var timer = new Timer(function()
   // When the countdown is finished pause timer
   if (distance <= 0)
   {
-    // Display buzzzzz in page title
+    // Display buzzzzz in the page title
     document.title = "Buzzzzz!";
 
     isTimerOver = true;
@@ -59,12 +63,16 @@ var timer = new Timer(function()
       // Play the selected alarm and selected volume
       playAlarm();
     }
+    // Display a notification
     if (alarmNotification.checked)
     {
       notify();
     }
   }
 }, 1000);
+
+// This prevents running the timer on document load
+timer.stop()
 
 // Timer is editable after double click and runs from edited value // "p",
 // FROM: https://codereview.stackexchange.com/questions/32520/double-click-to-edit-and-add-new-value-to-li
@@ -74,14 +82,13 @@ $("#timerDad").on("dblclick", "p", function (e) {
   // Stops the timer
   timer.stop();
 
-  // Get original value of the timer convert it to seconds
+  // Get original value of the timer and convert it to seconds
   oriVal = $(this).text();
   var oriList = oriVal.split(":");
   oriSeconds = (parseInt(oriList[0]) * 60) + parseInt(oriList[1]);
 
-  // Clear text and add an input field - ideally with the original value as a placeholder - works!
+  // Clear text and add an input field with the original value as a placeholder
   $(this).text("");
-
   $(`<input type='text' id="editableTimer" placeholder=${oriVal}>`).appendTo(this).focus();
 
   // This and on focus below "prevent" the timer breaking when user furiously clicks on it
@@ -93,18 +100,17 @@ $("#timerDad").on("focus", "p", function(e){
   e.stopPropagation();
 });
 
-// On focus out start playing inputed timer
+// On focus out start the timer
 // > jquerry for children of, p > input this does not make sense tho...I will ignore it for now
-
 $("#timerDad").on("focusout", "p > input", function (e)
 {
-  // Variable I will use later
+  // A variable I will use later
   var seconds;
 
-  // This gets input field
+  // This gets the input field
   var $this = $(this);
 
-  // Trying to convert new value to seconds
+  // Trying to convert the new value to seconds
   var newSeconds;
   // Getting the user input
   var list = $this.val().split(":");
@@ -113,42 +119,43 @@ $("#timerDad").on("focusout", "p > input", function (e)
   {
     newSeconds = parseInt(list[0]) * 60;
   }
-  // Two numbers with ":" between treat them as min:sec
+  // Two numbers with ":" between, treat them as min:sec
   else if (list.length == 2) {
     newSeconds = (parseInt(list[0]) * 60) + parseInt(list[1]);
   }
-  // Else wrong input, use the original timer value
+  // Else, it is wrong input - use the original timer value
   else
   {
     newSeconds = oriSeconds;
   }
 
-  // If input is NOT a number keep original value as the timer
+  // If input is NOT a number keep original timer value
   if(isNaN(newSeconds))
   {
     $this.parent().text(oriVal);
     seconds = oriSeconds;
   }
-  // Else set new value to the timer
+  // Else, set the new timer value
   else
   {
     $this.parent().text($this.val());
     seconds = newSeconds;
   }
 
-  // When timer set at 0, need to set it to 1 sec to counteract going to negative value
+  // Return if timer is set to 0
   if (seconds == 0)
   {
-    timerValue = 1 * 1000;
+    return
   }
+  // Else, start a new timer
   else
   {
     timerValue = seconds * 1000;
-  }
 
-  // Resetting the timer
-  n = 0;
-  timer.reset();
+    // Resetting the timer
+    n = 0;
+    timer.reset();
+  }
 
   // Remove this element
   $this.remove();
@@ -246,14 +253,27 @@ var resumePauseTimerToggler = function()
     }
   }
 }
+/* Keyboard shortcuts*/
+
+document.addEventListener('keyup', event =>
+{
+  // start a new tomato on enter click
+  if (event.keyCode === 13)
+  {
+    tomatoTimer();
+  }
+  // start a new break timer on shift enter click
+  if (event.keyCode == 13 && event.shiftKey)
+  {
+    breakTimer();
+  }
+})
 
 /* MEDIA */
-
 var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 // For devices with screen width of less than 600
 if (width < 600)
 {
-
   // Change the design of timer buttons
   var tomatoTimer = document.getElementById("tomatoTimer");
   var breakTimer = document.getElementById("breakTimer");
@@ -269,7 +289,6 @@ if (width < 600)
   timerContainer.classList.remove("mr-5");
   spotifyLogInForm.classList.remove("ml-2");
 
-
   tomatoTimer.classList.add("d-inline");
   breakTimer.classList.add("d-inline");
   timerDad.classList.add("mx-auto");
@@ -279,7 +298,6 @@ if (width < 600)
  * Alarm helpers
  *
 */
-
 // Collapse alarm section
 var alarmCollapser = document.getElementById("alarmCollapser");
 var alarmCollapserIcon = document.getElementById("alarmCollapserIcon");
@@ -328,9 +346,18 @@ alarmVolumeSelection.addEventListener("focusout", function()
   playAlarm();
 })
 
+// Keeping track of the alarm
+var alarm = null;
 // Play the alarm - https://howlerjs.com/
 function playAlarm()
 {
+  // Only one alarm can be played at the time
+  if (alarm != null) {
+    alarm.stop();
+    alarm.unload();
+    alarm = null;
+  }
+
   // What to play
   var selected = document.getElementById("alarmSelection");
   var url = selected.options[selected.selectedIndex].value;
@@ -347,7 +374,7 @@ function playAlarm()
   }
 
   // Actual alarm
-  var alarm = new Howl
+  alarm = new Howl
   ({
     src: [url],
     volume: volume,
@@ -382,7 +409,6 @@ function notify()
       }
     });
   }
-
 // At last, if the user has denied notifications, and you
 // want to be respectful there is no need to bother them any more.
 }

@@ -6,6 +6,9 @@ import urllib
 import requests
 import time
 import random
+import ntpath
+
+from pathlib import Path
 
 import spotipy
 import spotipy.util as util
@@ -22,7 +25,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
-from helpers import apology
+from helpers import apology, getListOfFiles
 
 from requests_oauthlib import OAuth2Session
 
@@ -38,7 +41,6 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 # TEMP secret key for sessions
 app.config["SECRET_KEY"] = "alabama123KENTUCKY"
 app.config.from_object(__name__)
-
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_TYPE"] = "filesystem"
@@ -62,25 +64,17 @@ scope = "streaming, user-library-read, playlist-read-private, playlist-read-coll
 # When I set it to false in dev env it breaks the authentication
 SHOW_DIALOG = True
 
-
 @app.route("/", methods=["GET", "POST"])
 @cross_origin(supports_credentials=True)
 def index():
     """Spotify Timer App!"""
 
     # Get all alarms and pass them to jinjia
-    cwd = os.getcwd()
-    if (cwd == "alarms"):
-        alarms = os.listdir()
-    else:
-        os.chdir("static")
-        os.chdir("alarms")
-        alarms = os.listdir()
-
-    # Go back to home directory
-    abspath = os.path.abspath(__file__)
-    dname = os.path.dirname(abspath)
-    os.chdir(dname)
+    alarmsPath = getListOfFiles("static/alarms")
+    # Creating a dict of alarm files: full_path = file
+    alarms = {}
+    for alarm in alarmsPath:
+        alarms[alarm] = ntpath.basename(alarm)
 
     # User reached route via POST
     if request.method == "POST":
@@ -122,37 +116,29 @@ def index():
 @cross_origin(supports_credentials=True)
 def callback():
 
-    # this is wrong, i need to find a way to cache token smarter.
-    # https://pythonhosted.org/Flask-Session/
-    # Session id
+    # Caching token in session file
+    # TODO: Ideally, I'd have login and a database with tokens
     s = session.sid
-    print("session.sid: ", s)
-    print("in callback session.get:", session.get("tomatoT"))
 
-    # I've added a username because it was throwing an error without it, I bet that it is a wrong solution.
     # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
     sp_oauth = spotipy.oauth2.SpotifyOAuth(client_id = client_id, username = s, client_secret = client_secret, redirect_uri = redirect_uri, scope = scope)
-    session.clear()
+
+    # TODO: I have commented out session.clear() does it have any bad effects?
+    # If I clear session, I lose tomatoT and breakT, are there any downsides to not clearning session? session.clear()
+
     code = request.args.get('code')
     token_info = sp_oauth.get_access_token(code)
 
     # Saving the access token along with all other token related info
     session["token_info"] = token_info
-
-    session["tomatoT"] = session.get("tomatoT")
-    session["breakT"] = session.get("breakT")
-
-    return redirect("/afterLogin/")
+    return redirect("/al/")
 
 # authorization-code-flow Step 3.
 # Use the access token to access the Spotify Web API;
 # Spotify returns requested data
-@app.route("/afterLogin/", methods=["GET", "POST"])
+@app.route("/al/", methods=["GET", "POST"])
 @cross_origin(supports_credentials=True)
 def after_login():
-    print("in afterlogin session.get:", session.get("tomatoT"))
-
-
     # Get user's Spotify Auth tokens
     session['token_info'], authorized = get_token(session)
     session.modified = True
@@ -168,10 +154,17 @@ def after_login():
     playlistsJSON = json.dumps(sp.current_user_playlists(), indent=4)
     playlists = json.loads(playlistsJSON)
 
-    # [new] Get user's current playback
+    # Append kitten placeholders to playlists without covers
+    for item in playlists["items"]:
+        if (len(item["images"]) == 0):
+            item["images"].append({'url': 'https://placekitten.com/300/300'})
+
+
+    # Get user's current playback
     current_playbackJSON = json.dumps(sp.current_playback(), indent=4)
     current_playback = json.loads(current_playbackJSON)
 
+    # Creating a dict for jinja and js
     if not current_playbackJSON == "null":
         current_playbackDict = {
             "volume": current_playback["device"]["volume_percent"],
@@ -183,6 +176,7 @@ def after_login():
             "track_name": current_playback["item"]["name"],
             "track_uri": current_playback["item"]["uri"]
         }
+    # Creating a placeholder dict, in case I don't get info from Spotify
     else:
         current_playbackDict = {
             "volume": 50,
@@ -195,24 +189,12 @@ def after_login():
             "track_uri": "spotify:track:3BjygBarJk0ZDwEooe1ccf"
         }
 
-    # Append kitten placeholders to empty playlists
-    for item in playlists["items"]:
-        if (len(item["images"]) == 0):
-            item["images"].append({'url': 'https://placekitten.com/300/300'})
-
     # Get all alarms and pass them to jinjia
-    cwd = os.getcwd()
-    if (cwd == "alarms"):
-        alarms = os.listdir()
-    else:
-        os.chdir("static")
-        os.chdir("alarms")
-        alarms = os.listdir()
-
-    # Go back to home directory
-    abspath = os.path.abspath(__file__)
-    dname = os.path.dirname(abspath)
-    os.chdir(dname)
+    alarmsPath = getListOfFiles("static/alarms")
+    # Creating a dict of alarm files: full_path = file
+    alarms = {}
+    for alarm in alarmsPath:
+        alarms[alarm]=ntpath.basename(alarm)
 
     # User reached route via POST
     if request.method == "POST":
@@ -227,32 +209,30 @@ def after_login():
             breakT = 5
         session["breakT"] = breakT
 
-        return render_template("afterLogin.html", tomatoT=session["tomatoT"], breakT=session["breakT"], alarms=alarms, playlists=playlists, route="/afterLogin/", current_playback=current_playbackDict)
+        return render_template("al.html", tomatoT=session["tomatoT"], breakT=session["breakT"], alarms=alarms, playlists=playlists, route="/al/", current_playback=current_playbackDict)
 
     # User reached route via GET
     else:
-        print("im in get");
         # Variables for JavaScript
         if session.get("tomatoT") is None:
             session["tomatoT"] = 25
         if session.get("breakT") is None:
             session["breakT"] = 5
 
-        return render_template("afterLogin.html", tomatoT=session["tomatoT"], breakT=session["breakT"], alarms=alarms, playlists=playlists, route="/afterLogin/", current_playback=current_playbackDict)
+        return render_template("al.html", tomatoT=session["tomatoT"], breakT=session["breakT"], alarms=alarms, playlists=playlists, route="/al/", current_playback=current_playbackDict)
 
 # Refresh token for SDK
 @app.route("/refresh_Oauth", methods=['POST'])
 @cross_origin(supports_credentials=True)
 def refresh_Oauth():
+    # Getting token via get_token route
     session['token_info'] = get_token(session)[0]
-
     token = session['token_info'].get('access_token')
     refreshToken = session['token_info'].get('refresh_token')
 
+    # Passing token to JavaScript
     response = jsonify(token=token, refreshToken=refreshToken)
-
     return response
-
 
 # Checks to see if token is valid and gets a new token if not
 def get_token(session):
@@ -260,7 +240,6 @@ def get_token(session):
     token_info = session.get("token_info")
 
     # Checking if the session already has a token stored
-    # I don't get this
     if not (session.get('token_info', False)):
         token_valid = False
         return token_info, token_valid
@@ -271,9 +250,8 @@ def get_token(session):
 
     # Refreshing token if it has expired
     if (is_token_expired):
-        # this is wrong, i need to find a way to store tokens smarter.
-        # https://pythonhosted.org/Flask-Session/
-        # Session id
+        # Caching token in session file
+        # TODO: Ideally, I'd have login and a database with tokens
         s = session.sid
 
         # Don't reuse a SpotifyOAuth object because they store token info and you could leak user tokens if you reuse a SpotifyOAuth object
@@ -294,34 +272,33 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route("/alarmUpload", methods=["GET", "POST"])
-@cross_origin()
+@cross_origin(supports_credentials=True)
 def ProcessAlarm():
-    print("im in process alarm")
     if request.method == "POST":
-        print("post")
-
-        # Checking if the post has the file
+        # Checking if post has a file
         if 'file' not in request.files:
-            print('No file part')
             return redirect("/")
 
         file = request.files['file']
-        print("file", file)
 
-        # if user does not select file, browser also
+        # Handling no file selected
         if file.filename == '':
-            print('No selected file')
-            return jsonify("No file selected")
+            return jsonify("No file selected.")
 
-        # if file has invalid extension return
+        # If the file has invalid extension return
         if not allowed_file(file.filename):
-            print("not allowed file")
-            return jsonify("Not allowed file")
+            return jsonify("File not allowed.")
 
         if file and allowed_file(file.filename):
-            print("im in if file and allowed_file(file.filename)")
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            # Creating a new folder in alarms depeding on session.sid
+            # TODO: Ideally, I have login and each user has their own folder and they can choose to get crowd sourced alarms
+            uploadFolder = app.config['UPLOAD_FOLDER'] + "/" + session.sid
+            Path(uploadFolder).mkdir(parents=True, exist_ok=True)
+
+            # Saving the file to the new folder
+            file.save(os.path.join(uploadFolder, filename))
             return jsonify("Great file, I am taking it.")
 
 def errorhandler(e):
@@ -329,7 +306,6 @@ def errorhandler(e):
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     return apology(e.name, e.code)
-
 
 # Listen for errors
 for code in default_exceptions:

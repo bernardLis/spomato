@@ -1,3 +1,24 @@
+/* trying to be a pro with css variables https://www.w3schools.com/css/css3_variables.asp */
+:root
+{
+  --background_color: #171717;
+  --light_gray: #c2c2c2;
+  --lighter_gray: #e0e0e0;
+  --darker_gray: #878684;
+  --even_darker_gray: #666966;
+  --spotify_green: #1DB954;
+}
+
+/* General classes */
+.hidden
+{
+  display: none;
+}
+.visible
+{
+  display: block;
+}
+
 /* CSS styles for viewports 1000px and less */
 @media (max-width: 1000px)
 {
@@ -48,6 +69,7 @@
     margin-right: 0;
   }
 }
+
 /* https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -55,12 +77,10 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
 }
-
 
 .brandContainer a
 {
@@ -74,7 +94,6 @@ main .form-control
 
     /* override Bootstrap's 100% width for form controls */
     width: auto;
-
 }
 
 main
@@ -87,7 +106,6 @@ main
 
     /* place for fixed player */
     margin-bottom: 10%;
-
 }
 
 main img
@@ -98,19 +116,18 @@ main img
 
 body
 {
-  background-color: #171717;
+  background-color: var(--background_color);
 }
 
 /* Changing bootstrap modal styles*/
-
 #changeTimerForm
 {
-  border-bottom: 1px solid #c2c2c2;
+  border-bottom: 1px solid var(--light_gray);
 }
 .modal-content
 {
-  color: #e0e0e0;
-  background-color: #171717;
+  color: var(--lighter_gray);
+  background-color: var(--background_color);
 }
 .modal-header
 {
@@ -125,10 +142,7 @@ body
   width: 50px;
 }
 
-
-
-
-
+/* Overriding bootstraps button styles */
 .btn:focus,.btn:active {
    outline: none !important;
    box-shadow: none;
@@ -141,7 +155,6 @@ body
 {
   transition: all .2s ease-in-out;
 }
-
 .btn-outline-danger:hover
 {
   transition: all .2s ease-in-out;
@@ -155,14 +168,14 @@ body
   filter: brightness(0.9);
 }
 
-
+/* Spotify login button styles */
 #spotifyLogin
 {
   font-size: 1rem;
   font-weight: bold;
   font-family: 'Lato', sans-serif;
   filter: brightness(0.95);
-  background: #1DB954;
+  background: var(--spotify_green);
   color: #FFFFFF;
   border: none;
   border-radius: 12px;
@@ -177,11 +190,10 @@ body
 
 
 /* SETTINGS */
-
 #settingsCog, #brandIcon
 {
   font-size: 1.2rem;
-  color: #c2c2c2;
+  color: var(--light_gray);
   cursor: pointer;
 }
 #settingsCog:hover, #brandIcon:hover, #alarmCollapser:hover
@@ -204,7 +216,6 @@ body
 }
 
 /* TIMER */
-
 .timerButtons
 {
   user-select: none;
@@ -222,7 +233,7 @@ body
 #timer
 {
   font-size: 5rem;
-  color: #eee;
+  color: var(--lighter_gray);
 }
 
 #editableTimer
@@ -241,12 +252,12 @@ body
   width: 50px;
   user-select: none;
   cursor: pointer;
-  color: #e0e0e0;
+  color: var(--lighter_gray);
 }
 
 #alarmContainer
 {
-  color: #e0e0e0;
+  color: var(--lighter_gray);
   text-align: left;
 }
 .select
@@ -256,9 +267,9 @@ body
   font-size: 1rem;
   outline: none;
   border: none;
-  color: #e0e0e0;
+  color: var(--lighter_gray);
   font-weight: bold;
-  background-color: #171717;
+  background-color: var(--background_color);
   cursor: pointer;
 }
 .inputfile
@@ -271,49 +282,33 @@ body
 {
   font-weight: bold;
 }
-
 #alarmVolumeInput
 {
   width: 1.7rem;
   outline: none;
   border: none;
-  color: #e0e0e0;
+  color: var(--lighter_gray);
   font-weight: bold;
-  background-color: #171717;
+  background-color: var(--background_color);
 }
 /* custom checkbox checked color */
 .custom-checkbox .custom-control-input:checked~ .custom-control-label::before
 {
-  background: #1DB954;
+  background: var(--spotify_green);
 }
 
-
 /* SPOTIFY */
-
-/* Playlist styles */
 #playlistContainer
 {
   padding-top: 5%;
 }
-/**/
 .playlistName
 {
   overflow: hidden;
   white-space: nowrap;
-  color: #e0e0e0;
+  color: var(--lighter_gray);
   font-weight: bold;
 }
-
-.hidden
-{
-  display: none;
-}
-
-.visible
-{
-  display: block;
-}
-
 .playlistElement
 {
   position: relative;
@@ -325,25 +320,18 @@ body
 {
   filter: brightness(40%);
 }
-
 .playlistCover
 {
   object-fit: cover;
   height: 250px;
-/*
-  width: 100%;
-  height: 100%;
-*/
   margin: 0;
 }
-
 .wrapperOfAWrapper
 {
   position: absolute;
   left: 50%;
   top: 50%;
 }
-
 .togglePlayPlaylistWrapper
 {
   width: 0;
@@ -352,14 +340,12 @@ body
   margin-top: -35px;
   margin-left: -22px;
 }
-
 .togglePlayPlaylist
 {
   font-size: 1.3rem;
-
   padding: 15px;
   color: white;
-  border: 1px solid #878684;
+  border: 1px solid var(--darker_gray);
   border-radius : 100%;
   background-color: rgba(0,0,0,0.5);
 }
@@ -373,12 +359,11 @@ body
 {
   transform: scale(0.95);
   transition: all .2s ease-in-out;
-  color: #adadad;
-  border: 1px solid #666966;
+  color: var(--lighter_gray);
+  border: 1px solid var(--even_darker_gray);
 }
 
 /* PLAYER */
-
 .playerContainer
 {
   position: fixed;
@@ -416,7 +401,6 @@ body
   overflow: hidden;
   white-space: nowrap;
   width: 100%
-
 }
 
 #togglePlayButton
@@ -424,7 +408,7 @@ body
   font-size: 0.8rem;
   padding: 8px;
   color: white;
-  border: 1px solid #878684;
+  border: 1px solid var(--darker_gray);
   border-radius : 100%;
   background-color: rgba(0,0,0,0.5);
 }
@@ -438,8 +422,8 @@ body
 {
   transform: scale(0.95);
   transition: all .2s ease-in-out;
-  color: #adadad;
-  border: 1px solid #666966;
+  color: var(--lighter_gray);
+  border: 1px solid var(--even_darker_gray);
 }
 
 .trackControls
@@ -447,36 +431,18 @@ body
   user-select: none; /*getting rid of text select pointer between elements*/
 }
 
-#previousTrack, #nextTrack
+#previousTrack, #nextTrack, #toggleShuffle, #toggleRepeat, #muteButton
 {
   font-size: 0.9rem;
-  color: #c2c2c2;
+  color: var(--light_gray);
 }
-#previousTrack:hover, #nextTrack:hover
-{
-  color: white;
-  transform: scale(1.1);
-  transition: all .4s ease-in-out;
-}
-#previousTrack:active, #nextTrack:active
-{
-  transform: scale(0.95);
-  transition: all .2s ease-in-out;
-  color: #c2c2c2;
-}
-
-#toggleShuffle, #toggleRepeat, #muteButton
-{
-  font-size: 0.9rem;
-  color: #c2c2c2;
-}
-#toggleShuffle:hover, #toggleRepeat:hover, #muteButton:hover
+#previousTrack:hover, #nextTrack:hover, #toggleShuffle:hover, #toggleRepeat:hover, #muteButton:hover
 {
   filter: brightness(125%);
   transform: scale(1.1);
   transition: all .4s ease-in-out;
 }
-#toggleShuffle:active, #toggleRepeat:active, #muteButton:active
+#previousTrack:active, #nextTrack:active, #toggleShuffle:active, #toggleRepeat:active, #muteButton:active
 {
   transform: scale(0.95);
   transition: all .2s ease-in-out;
@@ -487,8 +453,7 @@ body
 #trackPosition, #trackDuration
 {
   font-size: 0.8rem;
-  color: #c2c2c2;
-
+  color: var(--light_gray);
 }
 #trackRange
 {
@@ -533,7 +498,7 @@ body
   width: 0.8rem;
   height: 0.8rem;
   border-radius: 50%;
-  background: #1DB954; /* Green background */
+  background: var(--spotify_green); /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
@@ -541,6 +506,6 @@ body
   width: 0.8rem; /* Set a specific slider handle width */
   height: 0.8rem;
   border-radius: 50%;
-  background: #1DB954; /* Green background */
+  background: var(--spotify_green); /* Green background */
   cursor: pointer; /* Cursor on hover */
 }

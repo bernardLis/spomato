@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    index
+    spomato
 {% endblock %}
 
 {% block main %}
@@ -30,7 +30,6 @@
 
     {% if loop.index0 % 4 == 3 or loop.last %}
     </div>
-
     {% endif %}
 
     {% endfor %}
@@ -117,5 +116,5 @@
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script src="/static/spoScript.js"></script>
   <script src="/static/helpers.js"></script>
-  
+
 {% endblock %}

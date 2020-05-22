@@ -5,7 +5,8 @@ pip3 install -r requirements.txt
 
 $env:FLASK_APP = "application.py"
 flask run
-
+FLASK_APP=application.py
+export FLASK_APP
 
 $env:SPOTIPY_CLIENT_ID = "b7c4807138a84147bd1147b9bf602048"
 $env:SPOTIPY_CLIENT_SECRET = "699795974a5d467e900b64b3018d09d4"

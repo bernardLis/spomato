@@ -17,10 +17,10 @@ alarmFileInput.addEventListener("change", function()
 
   var filePath = alarmFileInput.value;
 
-  // Allowing file type
+  // Allowed file types
   var allowedExtensions = /(\.wav|\.mp3)$/i;
 
-  // If user tries to upload invalid file type, color file type span red
+  // If user tries to upload invalid file type, color file type alert red
   if (!allowedExtensions.exec(filePath))
   {
     fileValidationType.style.color = "#db0000";
@@ -31,7 +31,7 @@ alarmFileInput.addEventListener("change", function()
     fileValidationType.style.color = "#1DB954";
   }
 
-  // Allowing size
+  // Validating size
   if (alarmFileInput.files.length > 0)
   {
     for (var i = 0; i <= alarmFileInput.files.length - 1; i++)
@@ -51,6 +51,49 @@ alarmFileInput.addEventListener("change", function()
       }
     }
   }
+
+  // Validate file name before the upload
+  function getNameFromPath(strFilepath)
+  {
+    var objRE = new RegExp(/([^\/\\]+)$/);
+    var strName = objRE.exec(strFilepath);
+
+    if (strName == null)
+    {
+        return null;
+    }
+    else
+    {
+        return strName[0];
+    }
+  }
+
+  var filePath = alarmFileInput.value
+  var fileName = getNameFromPath(filePath)
+  fileName = fileName.toLowerCase();
+
+  // Check for hitler
+  if (fileName.includes("hitler"))
+  {
+    // Reset the file input
+    alarmFileInput.value = '';
+    // Reset the "alert" colors
+    fileValidationType.style.color = "#e0e0e0";
+    fileValidationSize.style.color = "#e0e0e0";
+    // Alert user
+    alert("No.");
+  }
+  // Check for pejorative usage of gay in PL
+  if (fileName.includes("pedał") || fileName.includes("pedzio") || fileName.includes("pederasta"))
+  {
+    // Reset the file input
+    alarmFileInput.value = '';
+    // Reset the "alert" colors
+    fileValidationType.style.color = "#e0e0e0";
+    fileValidationSize.style.color = "#e0e0e0";
+    // Alert user
+    alert("https://www.youtube.com/watch?v=xfBsr10ixkY");
+  }
 })
 
 // Sending the file to flask
@@ -60,7 +103,6 @@ $(function()
     {
       e.preventDefault();
       var form_data = new FormData($('#uploadAlarmForm')[0]);
-      console.log("formdata", form_data);
       $.ajax({
             type: 'POST',
             url: '/alarmUpload',
@@ -70,7 +112,6 @@ $(function()
             processData: false,
             beforeSend: function(xhr, data)
             {
-              console.log("im sending to myself: ", data);
             },
             success: function(data) {
                 console.log('Success!', data);
@@ -139,9 +180,6 @@ String.prototype.toHHMMSS = function ()
     }
 }
 
-
-
-
 /* Spotify Requests */
 
 // Play a playlist from URI on the Web Playback SDK's device ID
@@ -188,7 +226,6 @@ function transferPlayback()
     }
   });
 }
-
 
 function toggleShuffle(state)
 {
